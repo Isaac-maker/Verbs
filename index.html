@@ -29,7 +29,6 @@
     overflow-x: hidden;
   }
 
-  /* Background pattern */
   body::before {
     content: '';
     position: fixed;
@@ -49,7 +48,6 @@
     padding: 0 20px 60px;
   }
 
-  /* Header */
   header {
     text-align: center;
     padding: 50px 0 40px;
@@ -90,7 +88,6 @@
     font-weight: 300;
   }
 
-  /* Search box */
   .search-wrap {
     position: relative;
     margin: 36px 0 16px;
@@ -146,7 +143,6 @@
   }
   .clear-btn:hover { color: var(--red); background: rgba(192,57,43,0.08); }
 
-  /* Filter pills */
   .filters {
     display: flex;
     flex-wrap: wrap;
@@ -190,7 +186,6 @@
   .pill-d.active { background: #27ae60; color: #fff; }
   .pill-d:hover:not(.active) { background: rgba(39,174,96,0.06); }
 
-  /* Stats bar */
   .stats-bar {
     display: flex;
     align-items: center;
@@ -206,7 +201,6 @@
     font-weight: 600;
   }
 
-  /* Results */
   .results-grid {
     display: grid;
     gap: 14px;
@@ -311,7 +305,6 @@
     color: var(--ink);
   }
 
-  /* No results */
   .no-results {
     text-align: center;
     padding: 70px 20px;
@@ -328,13 +321,89 @@
     margin-bottom: 8px;
   }
 
-  /* Highlight */
   mark {
     background: rgba(201,168,76,0.35);
     color: inherit;
     border-radius: 3px;
     padding: 0 2px;
   }
+
+  /* ── Easter Egg Modal ── */
+  #eggOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,26,46,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  #eggOverlay.visible { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  #eggBox {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px 36px 32px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    border: 2px solid var(--gold-light);
+    position: relative;
+    animation: popUp 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes popUp {
+    from { opacity: 0; transform: scale(0.8) translateY(20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  #eggEmoji { font-size: 2.6rem; margin-bottom: 10px; }
+
+  #eggName {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: var(--teal);
+    margin-bottom: 14px;
+  }
+
+  #eggMsg {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .egg-divider {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--teal));
+    margin: 16px auto;
+    border-radius: 2px;
+  }
+
+  #eggClose {
+    margin-top: 24px;
+    padding: 10px 28px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  #eggClose:hover { background: var(--teal); transform: scale(1.04); }
 
   @media (max-width: 560px) {
     .card-forms { grid-template-columns: 1fr 1fr; }
@@ -375,6 +444,17 @@
   </div>
 
   <div class="results-grid" id="results"></div>
+</div>
+
+<!-- Easter Egg Modal -->
+<div id="eggOverlay">
+  <div id="eggBox">
+    <div id="eggEmoji"></div>
+    <div id="eggName"></div>
+    <div class="egg-divider"></div>
+    <div id="eggMsg"></div>
+    <button id="eggClose">Cerrar</button>
+  </div>
 </div>
 
 <script>
@@ -652,7 +732,6 @@ function render() {
   const q = currentQuery.trim();
   const filtered = VERBS.filter(v => matchesFilter(v) && matchesQuery(v, q));
 
-  // Stats
   const total = VERBS.filter(matchesFilter).length;
   statsCount.innerHTML = q
     ? `<strong>${filtered.length}</strong> resultado${filtered.length !== 1 ? 's' : ''} de <strong>${total}</strong>`
@@ -720,6 +799,7 @@ function render() {
 input.addEventListener('input', () => {
   currentQuery = input.value;
   clearBtn.style.display = currentQuery ? 'block' : 'none';
+  checkEasterEgg(currentQuery.trim());
   render();
 });
 
@@ -738,6 +818,51 @@ document.querySelectorAll('.pill').forEach(pill => {
     currentFilter = pill.dataset.filter;
     render();
   });
+});
+
+// ── Easter Eggs ──────────────────────────────────────────────
+const _e = [
+  {k:"eddy",   n:"Eddy",     i:"📖", m:'Proverbios 27:17\n\n"Ves… ese es el sonido del que le hablé, el famoso schwa" 😂'},
+  {k:"mari",   n:"Mari",     i:"🎵", m:"Recomiéndeme una canción de esas de reggaeton viejito de las que me habló. 🎶"},
+  {k:"naty",   n:"Naty",     i:"🇫🇷", m:'"Le français est facile."\n\nNaty, hackear sistemas es muy divertido, no me aliente 😂'},
+  {k:"angelica",n:"Angélica",i:"🏆", m:"Asistencia perfecta 100% ✅"},
+  {k:"michelle",n:"Michelle",i:"✈️", m:"Aprenda a usar paracaídas por si el avión se cae 😂"},
+  {k:"arturo", n:"Arturo",   i:"📚", m:"No voy a hablar de otro tema que no sea de la práctica, se lo prometo 😂"},
+  {k:"joss",   n:"Joss",     i:"🐱", m:"Joss cierre la ventana, cuidado se escapa la gata otra vez.\n\nEsperó que la pata de su perrito esté mejor 🐾"},
+  {k:"nicole", n:"Nicole",   i:"📝", m:"Nicole, mañana hay exposición, espero esté preparada. ¡Pilas! ⚡"},
+  {k:"eli",    n:"Eli",      i:"🐻", m:"Eli, gracias por la ayuda, siempre me estás ayudando. 💛\n\nSi ves al Oso Yogui me lo saluda 😂"},
+];
+
+let _shown = false;
+
+function checkEasterEgg(q) {
+  if (!q) { _shown = false; return; }
+  const lq = q.toLowerCase().trim();
+  const egg = _e.find(e => e.k === lq);
+  if (egg && !_shown) {
+    _shown = true;
+    showEgg(egg);
+  } else if (!egg) {
+    _shown = false;
+  }
+}
+
+function showEgg(egg) {
+  document.getElementById('eggEmoji').textContent = egg.i;
+  document.getElementById('eggName').textContent = egg.n;
+  document.getElementById('eggMsg').innerHTML = egg.m.replace(/\n/g, '<br>');
+  const overlay = document.getElementById('eggOverlay');
+  overlay.classList.add('visible');
+}
+
+document.getElementById('eggClose').addEventListener('click', () => {
+  document.getElementById('eggOverlay').classList.remove('visible');
+});
+
+document.getElementById('eggOverlay').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('eggOverlay')) {
+    document.getElementById('eggOverlay').classList.remove('visible');
+  }
 });
 
 // Initial render
