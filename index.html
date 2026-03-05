@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diccionario de Verbos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --cream: #f5f0e8;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --red: #c0392b;
+    --teal: #1a7a6e;
+    --teal-light: #d4f0ec;
+    --card-bg: #ffffff;
+    --muted: #7a7a8a;
+    --border: #e0d8cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(26,122,110,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 50px 0 40px;
+  }
+
+  .header-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  header h1 span {
+    color: var(--teal);
+  }
+
+  .header-line {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--teal));
+    margin: 18px auto 14px;
+    border-radius: 2px;
+  }
+
+  .header-sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 300;
+  }
+
+  /* Search box */
+  .search-wrap {
+    position: relative;
+    margin: 36px 0 16px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  #searchInput {
+    width: 100%;
+    padding: 18px 60px 18px 52px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    background: var(--card-bg);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  #searchInput::placeholder { color: #aaa; }
+
+  #searchInput:focus {
+    border-color: var(--teal);
+    box-shadow: 0 4px 20px rgba(26,122,110,0.15);
+  }
+
+  .clear-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.3rem;
+    color: var(--muted);
+    display: none;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 50%;
+    transition: color 0.2s, background 0.2s;
+  }
+  .clear-btn:hover { color: var(--red); background: rgba(192,57,43,0.08); }
+
+  /* Filter pills */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .pill {
+    padding: 7px 16px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.18s;
+    user-select: none;
+  }
+
+  .pill-all { background: var(--ink); color: var(--cream); }
+  .pill-all:hover, .pill-all.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+  .pill-all:not(.active) { background: transparent; color: var(--ink); border-color: var(--ink); }
+
+  .pill-irreg { border-color: var(--red); color: var(--red); }
+  .pill-irreg.active { background: var(--red); color: #fff; }
+  .pill-irreg:hover:not(.active) { background: rgba(192,57,43,0.06); }
+
+  .pill-reg { border-color: var(--teal); color: var(--teal); }
+  .pill-reg.active { background: var(--teal); color: #fff; }
+  .pill-reg:hover:not(.active) { background: rgba(26,122,110,0.06); }
+
+  .pill-id { border-color: #8e44ad; color: #8e44ad; }
+  .pill-id.active { background: #8e44ad; color: #fff; }
+  .pill-id:hover:not(.active) { background: rgba(142,68,173,0.06); }
+
+  .pill-t { border-color: #2980b9; color: #2980b9; }
+  .pill-t.active { background: #2980b9; color: #fff; }
+  .pill-t:hover:not(.active) { background: rgba(41,128,185,0.06); }
+
+  .pill-d { border-color: #27ae60; color: #27ae60; }
+  .pill-d.active { background: #27ae60; color: #fff; }
+  .pill-d:hover:not(.active) { background: rgba(39,174,96,0.06); }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .stats-count strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* Results */
+  .results-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .verb-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    animation: fadeUp 0.25s ease both;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .verb-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    border-color: var(--gold-light);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .infinitive-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+  }
+
+  .spanish-word {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 400;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .badge-wrap {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 4px 11px;
+    border-radius: 50px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
+  .badge-irreg { background: rgba(192,57,43,0.1); color: var(--red); }
+  .badge-reg   { background: rgba(26,122,110,0.1); color: var(--teal); }
+  .badge-id    { background: rgba(142,68,173,0.1); color: #8e44ad; }
+  .badge-t     { background: rgba(41,128,185,0.1); color: #2980b9; }
+  .badge-d     { background: rgba(39,174,96,0.1); color: #27ae60; }
+  .badge-sound { background: rgba(201,168,76,0.12); color: #a07830; font-size: 0.7rem; }
+
+  .card-forms {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    divide-x: 1px solid var(--border);
+  }
+
+  .form-cell {
+    padding: 14px 18px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .form-cell:last-child { border-right: none; }
+
+  .form-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .form-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  /* No results */
+  .no-results {
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--muted);
+    animation: fadeUp 0.3s ease;
+  }
+
+  .no-results .emoji { font-size: 3rem; margin-bottom: 16px; }
+
+  .no-results h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  /* Highlight */
+  mark {
+    background: rgba(201,168,76,0.35);
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+
+  @media (max-width: 560px) {
+    .card-forms { grid-template-columns: 1fr 1fr; }
+    .card-forms .form-cell:nth-child(2) { border-right: none; }
+    .card-forms .form-cell:nth-child(3) { border-right: none; border-top: 1px solid var(--border); grid-column: 1 / -1; }
+    .infinitive-word { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <p class="header-label">Diccionario de Verbos</p>
+    <h1>English <span>Verb</span><br>Dictionary</h1>
+    <div class="header-line"></div>
+    <p>Created by • Isaac-maker </p>
+    <div class="header-line"></div>
+    <p class="header-sub">Busca en español o inglés · Regulares e Irregulares</p>
+  </header>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Escribe un verbo… ej: run, correr, went…" autocomplete="off" spellcheck="false">
+    <button class="clear-btn" id="clearBtn" title="Limpiar">✕</button>
+  </div>
+
+  <div class="filters">
+    <span class="pill pill-all active" data-filter="all">Todos</span>
+    <span class="pill pill-irreg" data-filter="irregular">Irregulares</span>
+    <span class="pill pill-reg" data-filter="regular">Regulares</span>
+    <span class="pill pill-id" data-filter="id">/id/ sound</span>
+    <span class="pill pill-t" data-filter="t">/t/ sound</span>
+    <span class="pill pill-d" data-filter="d">/d/ sound</span>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats-count" id="statsCount"></div>
+  </div>
+
+  <div class="results-grid" id="results"></div>
+</div>
+
+<script>
+const VERBS = [
+  // ─── IRREGULARES ───────────────────────────────────────────
+  {type:"irregular",base:"Arise",past:"Arose",participle:"Arisen",es:"Surgir, Levantarse"},
+  {type:"irregular",base:"Awake",past:"Awoke",participle:"Awoken",es:"Despertarse"},
+  {type:"irregular",base:"Be",past:"Was / Were",participle:"Been",es:"Ser / Estar"},
+  {type:"irregular",base:"Bear",past:"Bore",participle:"Borne / Born",es:"Soportar, dar a luz"},
+  {type:"irregular",base:"Beat",past:"Beat",participle:"Beaten",es:"Golpear"},
+  {type:"irregular",base:"Become",past:"Became",participle:"Become",es:"Llegar a Ser"},
+  {type:"irregular",base:"Begin",past:"Began",participle:"Begun",es:"Empezar"},
+  {type:"irregular",base:"Bend",past:"Bent",participle:"Bent",es:"Doblar"},
+  {type:"irregular",base:"Bet",past:"Bet",participle:"Bet",es:"Apostar"},
+  {type:"irregular",base:"Bind",past:"Bound",participle:"Bound",es:"Atar, encuadernar"},
+  {type:"irregular",base:"Bid",past:"Bid",participle:"Bid",es:"Pujar"},
+  {type:"irregular",base:"Bite",past:"Bit",participle:"Bitten",es:"Morder"},
+  {type:"irregular",base:"Bleed",past:"Bled",participle:"Bled",es:"Sangrar"},
+  {type:"irregular",base:"Blow",past:"Blew",participle:"Blown",es:"Soplar"},
+  {type:"irregular",base:"Break",past:"Broke",participle:"Broken",es:"Romper"},
+  {type:"irregular",base:"Breed",past:"Bred",participle:"Bred",es:"Criar"},
+  {type:"irregular",base:"Bring",past:"Brought",participle:"Brought",es:"Traer, Llevar"},
+  {type:"irregular",base:"Broadcast",past:"Broadcast",participle:"Broadcast",es:"Radiar"},
+  {type:"irregular",base:"Build",past:"Built",participle:"Built",es:"Edificar"},
+  {type:"irregular",base:"Burn",past:"Burnt / Burned",participle:"Burnt / Burned",es:"Quemar"},
+  {type:"irregular",base:"Burst",past:"Burst",participle:"Burst",es:"Reventar"},
+  {type:"irregular",base:"Buy",past:"Bought",participle:"Bought",es:"Comprar"},
+  {type:"irregular",base:"Cast",past:"Cast",participle:"Cast",es:"Arrojar"},
+  {type:"irregular",base:"Catch",past:"Caught",participle:"Caught",es:"Coger"},
+  {type:"irregular",base:"Come",past:"Came",participle:"Come",es:"Venir"},
+  {type:"irregular",base:"Cost",past:"Cost",participle:"Cost",es:"Costar"},
+  {type:"irregular",base:"Cut",past:"Cut",participle:"Cut",es:"Cortar"},
+  {type:"irregular",base:"Choose",past:"Chose",participle:"Chosen",es:"Elegir"},
+  {type:"irregular",base:"Cling",past:"Clung",participle:"Clung",es:"Agarrarse"},
+  {type:"irregular",base:"Creep",past:"Crept",participle:"Crept",es:"Arrastrarse"},
+  {type:"irregular",base:"Deal",past:"Dealt",participle:"Dealt",es:"Tratar"},
+  {type:"irregular",base:"Dig",past:"Dug",participle:"Dug",es:"Cavar"},
+  {type:"irregular",base:"Do",past:"Did",participle:"Done",es:"Hacer"},
+  {type:"irregular",base:"Draw",past:"Drew",participle:"Drawn",es:"Dibujar"},
+  {type:"irregular",base:"Dream",past:"Dreamt / Dreamed",participle:"Dreamt / Dreamed",es:"Soñar"},
+  {type:"irregular",base:"Drink",past:"Drank",participle:"Drunk",es:"Beber"},
+  {type:"irregular",base:"Drive",past:"Drove",participle:"Driven",es:"Conducir"},
+  {type:"irregular",base:"Eat",past:"Ate",participle:"Eaten",es:"Comer"},
+  {type:"irregular",base:"Fall",past:"Fell",participle:"Fallen",es:"Caer"},
+  {type:"irregular",base:"Feed",past:"Fed",participle:"Fed",es:"Alimentar"},
+  {type:"irregular",base:"Feel",past:"Felt",participle:"Felt",es:"Sentir"},
+  {type:"irregular",base:"Fight",past:"Fought",participle:"Fought",es:"Luchar"},
+  {type:"irregular",base:"Find",past:"Found",participle:"Found",es:"Encontrar"},
+  {type:"irregular",base:"Flee",past:"Fled",participle:"Fled",es:"Huir"},
+  {type:"irregular",base:"Fly",past:"Flew",participle:"Flown",es:"Volar"},
+  {type:"irregular",base:"Forbid",past:"Forbade",participle:"Forbidden",es:"Prohibir"},
+  {type:"irregular",base:"Forget",past:"Forgot",participle:"Forgotten",es:"Olvidar"},
+  {type:"irregular",base:"Forgive",past:"Forgave",participle:"Forgiven",es:"Perdonar"},
+  {type:"irregular",base:"Freeze",past:"Froze",participle:"Frozen",es:"Helar"},
+  {type:"irregular",base:"Get",past:"Got",participle:"Got / Gotten",es:"Obtener"},
+  {type:"irregular",base:"Give",past:"Gave",participle:"Given",es:"Dar"},
+  {type:"irregular",base:"Go",past:"Went",participle:"Gone",es:"Ir"},
+  {type:"irregular",base:"Grow",past:"Grew",participle:"Grown",es:"Crecer"},
+  {type:"irregular",base:"Grind",past:"Ground",participle:"Ground",es:"Moler"},
+  {type:"irregular",base:"Hang",past:"Hung",participle:"Hung",es:"Colgar"},
+  {type:"irregular",base:"Have",past:"Had",participle:"Had",es:"Haber o Tener"},
+  {type:"irregular",base:"Hear",past:"Heard",participle:"Heard",es:"Oir"},
+  {type:"irregular",base:"Hide",past:"Hid",participle:"Hidden",es:"Ocultar"},
+  {type:"irregular",base:"Hit",past:"Hit",participle:"Hit",es:"Golpear"},
+  {type:"irregular",base:"Hold",past:"Held",participle:"Held",es:"Agarrar, Celebrar"},
+  {type:"irregular",base:"Hurt",past:"Hurt",participle:"Hurt",es:"Herir"},
+  {type:"irregular",base:"Keep",past:"Kept",participle:"Kept",es:"Conservar"},
+  {type:"irregular",base:"Know",past:"Knew",participle:"Known",es:"Saber, Conocer"},
+  {type:"irregular",base:"Kneel",past:"Knelt",participle:"Knelt",es:"Arrodillarse"},
+  {type:"irregular",base:"Knit",past:"Knit",participle:"Knit",es:"Hacer punto"},
+  {type:"irregular",base:"Lay",past:"Laid",participle:"Laid",es:"Poner"},
+  {type:"irregular",base:"Lead",past:"Led",participle:"Led",es:"Conducir"},
+  {type:"irregular",base:"Lean",past:"Leant",participle:"Leant",es:"Apoyarse"},
+  {type:"irregular",base:"Leap",past:"Leapt",participle:"Leapt",es:"Brincar"},
+  {type:"irregular",base:"Learn",past:"Learnt / Learned",participle:"Learnt / Learned",es:"Aprender"},
+  {type:"irregular",base:"Leave",past:"Left",participle:"Left",es:"Dejar"},
+  {type:"irregular",base:"Lend",past:"Lent",participle:"Lent",es:"Prestar"},
+  {type:"irregular",base:"Let",past:"Let",participle:"Let",es:"Permitir"},
+  {type:"irregular",base:"Lie",past:"Lay",participle:"Lain",es:"Echarse"},
+  {type:"irregular",base:"Light",past:"Lit",participle:"Lit",es:"Encender"},
+  {type:"irregular",base:"Lose",past:"Lost",participle:"Lost",es:"Perder"},
+  {type:"irregular",base:"Make",past:"Made",participle:"Made",es:"Hacer"},
+  {type:"irregular",base:"Mean",past:"Meant",participle:"Meant",es:"Significar"},
+  {type:"irregular",base:"Meet",past:"Met",participle:"Met",es:"Encontrar"},
+  {type:"irregular",base:"Mistake",past:"Mistook",participle:"Mistaken",es:"Equivocar"},
+  {type:"irregular",base:"Overcome",past:"Overcame",participle:"Overcome",es:"Vencer"},
+  {type:"irregular",base:"Pay",past:"Paid",participle:"Paid",es:"Pagar"},
+  {type:"irregular",base:"Put",past:"Put",participle:"Put",es:"Poner"},
+  {type:"irregular",base:"Read",past:"Read",participle:"Read",es:"Leer"},
+  {type:"irregular",base:"Ride",past:"Rode",participle:"Ridden",es:"Montar"},
+  {type:"irregular",base:"Ring",past:"Rang",participle:"Rung",es:"Llamar"},
+  {type:"irregular",base:"Rise",past:"Rose",participle:"Risen",es:"Levantarse"},
+  {type:"irregular",base:"Run",past:"Ran",participle:"Run",es:"Correr"},
+  {type:"irregular",base:"Say",past:"Said",participle:"Said",es:"Decir"},
+  {type:"irregular",base:"See",past:"Saw",participle:"Seen",es:"Ver"},
+  {type:"irregular",base:"Seek",past:"Sought",participle:"Sought",es:"Buscar"},
+  {type:"irregular",base:"Sell",past:"Sold",participle:"Sold",es:"Vender"},
+  {type:"irregular",base:"Send",past:"Sent",participle:"Sent",es:"Enviar"},
+  {type:"irregular",base:"Set",past:"Set",participle:"Set",es:"Poner(se)"},
+  {type:"irregular",base:"Sew",past:"Sewed",participle:"Sewed / Sewn",es:"Coser"},
+  {type:"irregular",base:"Shake",past:"Shook",participle:"Shaken",es:"Sacudir"},
+  {type:"irregular",base:"Shear",past:"Shore",participle:"Shorn",es:"Esquilar"},
+  {type:"irregular",base:"Shine",past:"Shone",participle:"Shone",es:"Brillar"},
+  {type:"irregular",base:"Shoot",past:"Shot",participle:"Shot",es:"Disparar"},
+  {type:"irregular",base:"Show",past:"Showed",participle:"Shown",es:"Mostrar"},
+  {type:"irregular",base:"Shrink",past:"Shrank",participle:"Shrunk",es:"Encogerse"},
+  {type:"irregular",base:"Shut",past:"Shut",participle:"Shut",es:"Cerrar"},
+  {type:"irregular",base:"Sing",past:"Sang",participle:"Sung",es:"Cantar"},
+  {type:"irregular",base:"Sink",past:"Sank",participle:"Sunk",es:"Hundir"},
+  {type:"irregular",base:"Sit",past:"Sat",participle:"Sat",es:"Sentarse"},
+  {type:"irregular",base:"Sleep",past:"Slept",participle:"Slept",es:"Dormir"},
+  {type:"irregular",base:"Slide",past:"Slid",participle:"Slid",es:"Resbalar"},
+  {type:"irregular",base:"Smell",past:"Smelt",participle:"Smelt",es:"Oler"},
+  {type:"irregular",base:"Sow",past:"Sowed",participle:"Sowed / Sown",es:"Sembrar"},
+  {type:"irregular",base:"Speak",past:"Spoke",participle:"Spoken",es:"Hablar"},
+  {type:"irregular",base:"Speed",past:"Sped",participle:"Sped",es:"Acelerar"},
+  {type:"irregular",base:"Spell",past:"Spelt",participle:"Spelt",es:"Deletrear"},
+  {type:"irregular",base:"Spend",past:"Spent",participle:"Spent",es:"Gastar"},
+  {type:"irregular",base:"Spill",past:"Spilt / Spilled",participle:"Spilt / Spilled",es:"Derramar"},
+  {type:"irregular",base:"Spin",past:"Spun",participle:"Spun",es:"Hilar"},
+  {type:"irregular",base:"Spit",past:"Spat",participle:"Spat",es:"Escupir"},
+  {type:"irregular",base:"Split",past:"Split",participle:"Split",es:"Hender / partir / rajar"},
+  {type:"irregular",base:"Spoil",past:"Spoilt / Spoiled",participle:"Spoilt / Spoiled",es:"Estropear"},
+  {type:"irregular",base:"Spread",past:"Spread",participle:"Spread",es:"Extender"},
+  {type:"irregular",base:"Spring",past:"Sprang",participle:"Sprung",es:"Saltar"},
+  {type:"irregular",base:"Stand",past:"Stood",participle:"Stood",es:"Estar en pie"},
+  {type:"irregular",base:"Steal",past:"Stole",participle:"Stolen",es:"Robar"},
+  {type:"irregular",base:"Stick",past:"Stuck",participle:"Stuck",es:"Pegar, Engomar"},
+  {type:"irregular",base:"Sting",past:"Stung",participle:"Stung",es:"Picar"},
+  {type:"irregular",base:"Stink",past:"Stank / Stunk",participle:"Stunk",es:"Apestar"},
+  {type:"irregular",base:"Stride",past:"Strode",participle:"Stridden",es:"Dar zancadas"},
+  {type:"irregular",base:"Strike",past:"Struck",participle:"Struck",es:"Golpear"},
+  {type:"irregular",base:"Swear",past:"Swore",participle:"Sworn",es:"Jurar"},
+  {type:"irregular",base:"Sweat",past:"Sweat",participle:"Sweat",es:"Sudar"},
+  {type:"irregular",base:"Sweep",past:"Swept",participle:"Swept",es:"Barrer"},
+  {type:"irregular",base:"Swell",past:"Swelled",participle:"Swollen",es:"Hinchar"},
+  {type:"irregular",base:"Swim",past:"Swam",participle:"Swum",es:"Nadar"},
+  {type:"irregular",base:"Swing",past:"Swung",participle:"Swung",es:"Columpiarse"},
+  {type:"irregular",base:"Take",past:"Took",participle:"Taken",es:"Coger"},
+  {type:"irregular",base:"Teach",past:"Taught",participle:"Taught",es:"Enseñar"},
+  {type:"irregular",base:"Tear",past:"Tore",participle:"Torn",es:"Rasgar"},
+  {type:"irregular",base:"Tell",past:"Told",participle:"Told",es:"Decir"},
+  {type:"irregular",base:"Think",past:"Thought",participle:"Thought",es:"Pensar"},
+  {type:"irregular",base:"Throw",past:"Threw",participle:"Thrown",es:"Arrojar, Tirar"},
+  {type:"irregular",base:"Thrust",past:"Thrust",participle:"Thrust",es:"Introducir"},
+  {type:"irregular",base:"Tread",past:"Trod",participle:"Trodden",es:"Pisar, hollar"},
+  {type:"irregular",base:"Understand",past:"Understood",participle:"Understood",es:"Entender"},
+  {type:"irregular",base:"Undergo",past:"Underwent",participle:"Undergone",es:"Sufrir"},
+  {type:"irregular",base:"Undertake",past:"Undertook",participle:"Undertaken",es:"Emprender"},
+  {type:"irregular",base:"Wake",past:"Woke",participle:"Woken",es:"Despertarse"},
+  {type:"irregular",base:"Wear",past:"Wore",participle:"Worn",es:"Llevar puesto"},
+  {type:"irregular",base:"Weave",past:"Wove",participle:"Woven",es:"Tejer"},
+  {type:"irregular",base:"Weep",past:"Wept",participle:"Wept",es:"Llorar"},
+  {type:"irregular",base:"Wet",past:"Wet",participle:"Wet",es:"Mojar"},
+  {type:"irregular",base:"Win",past:"Won",participle:"Won",es:"Ganar"},
+  {type:"irregular",base:"Wind",past:"Wound",participle:"Wound",es:"Enrollar"},
+  {type:"irregular",base:"Withdraw",past:"Withdrew",participle:"Withdrawn",es:"Retirarse"},
+  {type:"irregular",base:"Wring",past:"Wrung",participle:"Wrung",es:"Torcer"},
+  {type:"irregular",base:"Write",past:"Wrote",participle:"Written",es:"Escribir"},
+
+  // ─── REGULARES /id/ ─────────────────────────────────────────
+  {type:"regular",sound:"id",base:"Accept",past:"Accepted",participle:"Accepted",es:"Aceptar"},
+  {type:"regular",sound:"id",base:"Count",past:"Counted",participle:"Counted",es:"Contar"},
+  {type:"regular",sound:"id",base:"Date",past:"Dated",participle:"Dated",es:"Citar"},
+  {type:"regular",sound:"id",base:"End",past:"Ended",participle:"Ended",es:"Terminar"},
+  {type:"regular",sound:"id",base:"Expect",past:"Expected",participle:"Expected",es:"Esperar"},
+  {type:"regular",sound:"id",base:"Intend",past:"Intended",participle:"Intended",es:"Intentar"},
+  {type:"regular",sound:"id",base:"Need",past:"Needed",participle:"Needed",es:"Necesitar"},
+  {type:"regular",sound:"id",base:"Plant",past:"Planted",participle:"Planted",es:"Plantar"},
+  {type:"regular",sound:"id",base:"Point",past:"Pointed",participle:"Pointed",es:"Señalar"},
+  {type:"regular",sound:"id",base:"Rent",past:"Rented",participle:"Rented",es:"Rentar"},
+  {type:"regular",sound:"id",base:"Repeat",past:"Repeated",participle:"Repeated",es:"Repetir"},
+  {type:"regular",sound:"id",base:"Resist",past:"Resisted",participle:"Resisted",es:"Resistir"},
+  {type:"regular",sound:"id",base:"Start",past:"Started",participle:"Started",es:"Empezar"},
+  {type:"regular",sound:"id",base:"Visit",past:"Visited",participle:"Visited",es:"Visitar"},
+  {type:"regular",sound:"id",base:"Wait",past:"Waited",participle:"Waited",es:"Esperar"},
+  {type:"regular",sound:"id",base:"Want",past:"Wanted",participle:"Wanted",es:"Querer"},
+
+  // ─── REGULARES /t/ ──────────────────────────────────────────
+  {type:"regular",sound:"t",base:"Ask",past:"Asked",participle:"Asked",es:"Preguntar"},
+  {type:"regular",sound:"t",base:"Cook",past:"Cooked",participle:"Cooked",es:"Cocinar"},
+  {type:"regular",sound:"t",base:"Dance",past:"Danced",participle:"Danced",es:"Bailar"},
+  {type:"regular",sound:"t",base:"Dress",past:"Dressed",participle:"Dressed",es:"Vestir"},
+  {type:"regular",sound:"t",base:"Erase",past:"Erased",participle:"Erased",es:"Borrar"},
+  {type:"regular",sound:"t",base:"Finish",past:"Finished",participle:"Finished",es:"Terminar"},
+  {type:"regular",sound:"t",base:"Help",past:"Helped",participle:"Helped",es:"Ayudar"},
+  {type:"regular",sound:"t",base:"Jump",past:"Jumped",participle:"Jumped",es:"Brincar / Saltar"},
+  {type:"regular",sound:"t",base:"Like",past:"Liked",participle:"Liked",es:"Gustar"},
+  {type:"regular",sound:"t",base:"Look",past:"Looked",participle:"Looked",es:"Mirar"},
+  {type:"regular",sound:"t",base:"Miss",past:"Missed",participle:"Missed",es:"Extrañar"},
+  {type:"regular",sound:"t",base:"Practice",past:"Practiced",participle:"Practiced",es:"Practicar"},
+  {type:"regular",sound:"t",base:"Push",past:"Pushed",participle:"Pushed",es:"Empujar"},
+  {type:"regular",sound:"t",base:"Shop",past:"Shopped",participle:"Shopped",es:"Comprar"},
+  {type:"regular",sound:"t",base:"Smoke",past:"Smoked",participle:"Smoked",es:"Fumar"},
+  {type:"regular",sound:"t",base:"Stop",past:"Stopped",participle:"Stopped",es:"Detener"},
+  {type:"regular",sound:"t",base:"Talk",past:"Talked",participle:"Talked",es:"Hablar"},
+  {type:"regular",sound:"t",base:"Use",past:"Used",participle:"Used",es:"Usar"},
+  {type:"regular",sound:"t",base:"Walk",past:"Walked",participle:"Walked",es:"Caminar"},
+  {type:"regular",sound:"t",base:"Wash",past:"Washed",participle:"Washed",es:"Lavar"},
+  {type:"regular",sound:"t",base:"Wish",past:"Wished",participle:"Wished",es:"Desear"},
+  {type:"regular",sound:"t",base:"Work",past:"Worked",participle:"Worked",es:"Trabajar"},
+
+  // ─── REGULARES /d/ ──────────────────────────────────────────
+  {type:"regular",sound:"d",base:"Answer",past:"Answered",participle:"Answered",es:"Responder"},
+  {type:"regular",sound:"d",base:"Arrive",past:"Arrived",participle:"Arrived",es:"Llegar / Arribar"},
+  {type:"regular",sound:"d",base:"Belong",past:"Belonged",participle:"Belonged",es:"Pertenecer"},
+  {type:"regular",sound:"d",base:"Change",past:"Changed",participle:"Changed",es:"Cambiar"},
+  {type:"regular",sound:"d",base:"Clean",past:"Cleaned",participle:"Cleaned",es:"Limpiar"},
+  {type:"regular",sound:"d",base:"Climb",past:"Climbed",participle:"Climbed",es:"Escalar"},
+  {type:"regular",sound:"d",base:"Close",past:"Closed",participle:"Closed",es:"Cerrar"},
+  {type:"regular",sound:"d",base:"Consider",past:"Considered",participle:"Considered",es:"Considerar"},
+  {type:"regular",sound:"d",base:"Dare",past:"Dared",participle:"Dared",es:"Retar"},
+  {type:"regular",sound:"d",base:"Deliver",past:"Delivered",participle:"Delivered",es:"Entregar"},
+  {type:"regular",sound:"d",base:"Enjoy",past:"Enjoyed",participle:"Enjoyed",es:"Disfrutar"},
+  {type:"regular",sound:"d",base:"Fill",past:"Filled",participle:"Filled",es:"Llenar"},
+  {type:"regular",sound:"d",base:"Follow",past:"Followed",participle:"Followed",es:"Seguir"},
+  {type:"regular",sound:"d",base:"Hurry",past:"Hurried",participle:"Hurried",es:"Apurar / Darse prisa"},
+  {type:"regular",sound:"d",base:"Learn",past:"Learned",participle:"Learned",es:"Aprender"},
+  {type:"regular",sound:"d",base:"Listen",past:"Listened",participle:"Listened",es:"Escuchar"},
+  {type:"regular",sound:"d",base:"Live",past:"Lived",participle:"Lived",es:"Vivir"},
+  {type:"regular",sound:"d",base:"Love",past:"Loved",participle:"Loved",es:"Amar"},
+  {type:"regular",sound:"d",base:"Name",past:"Named",participle:"Named",es:"Nombrar"},
+  {type:"regular",sound:"d",base:"Open",past:"Opened",participle:"Opened",es:"Abrir"},
+  {type:"regular",sound:"d",base:"Order",past:"Ordered",participle:"Ordered",es:"Ordenar"},
+  {type:"regular",sound:"d",base:"Plan",past:"Planned",participle:"Planned",es:"Planear"},
+  {type:"regular",sound:"d",base:"Play",past:"Played",participle:"Played",es:"Jugar"},
+  {type:"regular",sound:"d",base:"Rain",past:"Rained",participle:"Rained",es:"Llover"},
+  {type:"regular",sound:"d",base:"Remember",past:"Remembered",participle:"Remembered",es:"Recordar"},
+  {type:"regular",sound:"d",base:"Show",past:"Showed",participle:"Showed",es:"Mostrar"},
+  {type:"regular",sound:"d",base:"Stay",past:"Stayed",participle:"Stayed",es:"Permanecer"},
+  {type:"regular",sound:"d",base:"Study",past:"Studied",participle:"Studied",es:"Estudiar"},
+  {type:"regular",sound:"d",base:"Travel",past:"Traveled",participle:"Traveled",es:"Viajar"},
+  {type:"regular",sound:"d",base:"Try",past:"Tried",participle:"Tried",es:"Intentar / Tratar"},
+  {type:"regular",sound:"d",base:"Turn",past:"Turned",participle:"Turned",es:"Voltear / Dar vuelta"},
+];
+
+let currentFilter = 'all';
+let currentQuery = '';
+
+const input = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearBtn');
+const results = document.getElementById('results');
+const statsCount = document.getElementById('statsCount');
+
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function matchesFilter(v) {
+  if (currentFilter === 'all') return true;
+  if (currentFilter === 'irregular') return v.type === 'irregular';
+  if (currentFilter === 'regular') return v.type === 'regular';
+  if (currentFilter === 'id') return v.sound === 'id';
+  if (currentFilter === 't') return v.sound === 't';
+  if (currentFilter === 'd') return v.sound === 'd';
+  return true;
+}
+
+function matchesQuery(v, q) {
+  if (!q) return true;
+  const lq = q.toLowerCase();
+  return [v.base, v.past, v.participle, v.es].some(f =>
+    f.toLowerCase().includes(lq)
+  );
+}
+
+function getSoundLabel(v) {
+  if (v.type === 'irregular') return '';
+  return v.sound === 'id' ? '/id/' : v.sound === 't' ? '/t/' : '/d/';
+}
+
+function render() {
+  const q = currentQuery.trim();
+  const filtered = VERBS.filter(v => matchesFilter(v) && matchesQuery(v, q));
+
+  // Stats
+  const total = VERBS.filter(matchesFilter).length;
+  statsCount.innerHTML = q
+    ? `<strong>${filtered.length}</strong> resultado${filtered.length !== 1 ? 's' : ''} de <strong>${total}</strong>`
+    : `<strong>${total}</strong> verbo${total !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) {
+    results.innerHTML = `
+      <div class="no-results">
+        <div class="emoji">🔎</div>
+        <h3>No se encontraron verbos</h3>
+        <p>Prueba con otra palabra en inglés o español</p>
+      </div>`;
+    return;
+  }
+
+  results.innerHTML = filtered.map((v, i) => {
+    const isIrreg = v.type === 'irregular';
+    const soundLabel = getSoundLabel(v);
+    const delay = Math.min(i * 30, 300);
+
+    const typeBadge = isIrreg
+      ? `<span class="badge badge-irreg">Irregular</span>`
+      : `<span class="badge badge-reg">Regular</span>`;
+
+    const soundBadge = soundLabel
+      ? `<span class="badge badge-sound">${soundLabel} sound</span>`
+      : '';
+
+    const hBase = highlight(v.base, q);
+    const hPast = highlight(v.past, q);
+    const hPart = highlight(v.participle, q);
+    const hEs   = highlight(v.es, q);
+
+    return `
+    <div class="verb-card" style="animation-delay:${delay}ms">
+      <div class="card-top">
+        <div>
+          <div class="infinitive-word">${hBase}</div>
+          <div class="spanish-word">${hEs}</div>
+        </div>
+        <div class="badge-wrap">
+          ${typeBadge}
+          ${soundBadge}
+        </div>
+      </div>
+      <div class="card-forms">
+        <div class="form-cell">
+          <div class="form-label">Base Form</div>
+          <div class="form-value">${hBase}</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-label">Simple Past</div>
+          <div class="form-value">${hPast}</div>
+        </div>
+        <div class="form-cell">
+          <div class="form-label">Past Participle</div>
+          <div class="form-value">${hPart}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Events
+input.addEventListener('input', () => {
+  currentQuery = input.value;
+  clearBtn.style.display = currentQuery ? 'block' : 'none';
+  render();
+});
+
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  currentQuery = '';
+  clearBtn.style.display = 'none';
+  input.focus();
+  render();
+});
+
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    currentFilter = pill.dataset.filter;
+    render();
+  });
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
