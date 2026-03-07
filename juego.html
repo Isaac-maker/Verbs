@@ -1,748 +1,1247 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>English Verbs Quiz</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0f0f14; --surface: #16161e; --border: #2a2a3a;
-    --accent: #6b8cae; --accent2: #a8c0d6; --text: #e8eaf0;
-    --muted: #6b6d7a; --correct: #4caf7d; --wrong: #e05c5c;
-    --yellow: #d4a843; --typebadge: #ee4f3a; --verbqw:#ee8a19; --boxselct:#e7f78e;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Space Mono',monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:2rem 1rem; }
-  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 60% 40% at 50% 0%,#203622 0%,transparent 70%); pointer-events:none; z-index:0; }
-  .container { width:100%; max-width:900px; position:relative; z-index:1; }
-  header { text-align:center; margin-bottom:2.5rem; }
-  .title { font-family:'Syne',sans-serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:800; letter-spacing:-0.03em; color:var(--text); line-height:1; }
-  .title span { color:var(--accent); }
-  .subtitle { margin-top:0.5rem; color:var(--muted); font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; }
-  .stats { display:flex; gap:1rem; margin-bottom:1.5rem; justify-content:space-between; flex-wrap:wrap; }
-  .stat-box { background:var(--surface); border:1px solid var(--border); padding:2.3rem 2rem; flex:1; min-width:100px; text-align:center; }
-  .stat-label { font-size:1rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); display:block; }
-  .stat-value { font-family:'Syne',sans-serif; font-size:2.5rem; font-weight:500; color:var(--accent2); display:block; line-height:1; }
-  .progress-wrap { height:3px; background:var(--border); margin-bottom:2rem; overflow:hidden; }
-  .progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.4s ease; }
-  .card { background:var(--surface); border:1px solid var(--border); padding:2rem; margin-bottom:1.5rem; position:relative; overflow:hidden; animation:fadeIn 0.3s ease; }
-  .card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2),transparent); }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  .question-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; }
-  .q-counter { font-size:1rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--yellow); }
-  .q-type-badge { font-size:0.8rem; letter-spacing:0.3em; text-transform:uppercase; padding:0.3rem 0.7rem; border:1.1px solid var(--accent); color:var(--typebadge); }
-  .question-text { font-family:'Syne',sans-serif; font-size:clamp(1rem,3vw,1.3rem); font-weight:700; line-height:1.4; margin-bottom:0.6rem; color:var(--text); }
-  .verb-highlight { color:var(--verbqw); font-style:italic; }
-  .q-hint { font-size:0.7rem; color:var(--accent2); margin-bottom:1.5rem; letter-spacing:0.05em; }
-  .options { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
-  .option-btn { background:transparent; border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:0.8rem; padding:0.9rem 1rem; cursor:pointer; text-align:left; transition:all 0.15s ease; }
-  .option-btn:hover:not(:disabled) { border-color:var(--accent); background:rgba(107,140,174,0.08); }
-  .option-btn.correct { border-color:var(--correct); background:rgba(76,175,125,0.12); color:var(--correct); }
-  .option-btn.wrong { border-color:var(--wrong); background:rgba(224,92,92,0.1); color:var(--wrong); text-decoration:line-through; }
-  .option-btn:disabled { cursor:default; }
-  .option-letter { font-family:'Syne',sans-serif; font-weight:800; font-size:0.7rem; color:var(--muted); margin-right:0.5rem; }
-  .option-btn.correct .option-letter { color:var(--correct); }
-  .option-btn.wrong .option-letter { color:var(--wrong); }
-  .feedback { margin-top:1rem; padding:0.8rem 1rem; font-size:0.75rem; border-left:3px solid transparent; display:none; line-height:1.6; }
-  .feedback.show { display:block; animation:fadeIn 0.2s ease; }
-  .feedback.correct-fb { border-color:var(--correct); background:rgba(76,175,125,0.06); color:var(--correct); }
-  .feedback.wrong-fb { border-color:var(--wrong); background:rgba(224,92,92,0.06); color:var(--accent2); }
-  .next-btn { display:none; width:100%; background:var(--accent); border:none; color:#0f0f14; font-family:'Syne',sans-serif; font-weight:600; font-size:1rem; letter-spacing:0.1em; text-transform:uppercase; padding:1.5rem; cursor:pointer; margin-top:1rem; transition:background 0.15s; }
-  .next-btn:hover { background:var(--accent2); }
-  .next-btn.show { display:block; animation:fadeIn 0.3s ease; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Verbs Quiz</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --surface: #16161e;
+      --border: #2a2a3a;
+      --accent: #6b8cae;
+      --accent2: #a8c0d6;
+      --text: #e8eaf0;
+      --muted: #6b6d7a;
+      --correct: #4caf7d;
+      --wrong: #e05c5c;
+      --yellow: #d4a843;
+      --typebadge: #ee4f3a;
+      --verbqw: #ee8a19;
+      --boxselct: #e7f78e;
+    }
 
-  /* Verb reference card */
-  .verb-card { display:none; margin-top:1rem; border:1px solid var(--border); background:rgba(107,140,174,0.04); animation:fadeIn 0.3s ease; }
-  .verb-card.show { display:block; }
-  .verb-card-title { font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); padding:0.6rem 1rem 0.3rem; border-bottom:1px solid var(--border); }
-  .verb-card-grid { display:grid; grid-template-columns:repeat(3,1fr); }
-  .verb-col { padding:0.9rem 1rem; border-right:1px solid var(--border); }
-  .verb-col:last-child { border-right:none; }
-  .verb-col-header { font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); margin-bottom:0.45rem; display:block; }
-  .verb-col-en { font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; color:var(--accent2); display:block; margin-bottom:0.3rem; }
-  .verb-col-es { font-size:0.72rem; color:var(--yellow); display:block; line-height:1.4; }
-  @media (max-width:540px) {
-    .verb-card-grid { grid-template-columns:1fr; }
-    .verb-col { border-right:none; border-bottom:1px solid var(--border); }
-    .verb-col:last-child { border-bottom:none; }
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  .credit { text-align:center; margin-top:0.5rem; font-size:0.65rem; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; }
-  .credit span { color:var(--accent); }
-  .result-screen { display:none; text-align:center; padding:3rem 2rem; background:var(--surface); border:1px solid var(--border); position:relative; overflow:hidden; }
-  .result-screen::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--yellow),var(--accent2)); }
-  .result-screen.show { display:block; animation:fadeIn 0.4s ease; }
-  .result-score { font-family:'Syne',sans-serif; font-size:5rem; font-weight:800; color:var(--accent2); line-height:1; }
-  .result-total { font-size:1.2rem; color:var(--muted); margin-bottom:1rem; }
-  .result-msg { font-size:0.85rem; color:var(--text); margin-bottom:1.5rem; line-height:1.6; }
-  .result-stars { font-size:2rem; margin-bottom:1.5rem; letter-spacing:0.2em; }
-  .result-breakdown { display:flex; gap:1rem; justify-content:center; margin-bottom:2rem; flex-wrap:wrap; }
-  .breakdown-item { padding:0.5rem 1rem; border:1px solid var(--border); font-size:0.7rem; letter-spacing:0.05em; }
-  .breakdown-item .num { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:800; display:block; line-height:1; }
-  .breakdown-item.correct-stat .num { color:var(--correct); }
-  .breakdown-item.wrong-stat .num { color:var(--wrong); }
-  .restart-btn { background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'Syne',sans-serif; font-weight:700; font-size:0.85rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.9rem 2.5rem; cursor:pointer; transition:all 0.15s; }
-  .restart-btn:hover { background:var(--accent); color:var(--bg); }
-  .mode-screen { text-align:center; padding:2rem 1rem; }
-  .mode-title { font-family:'Syne',sans-serif; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem; }
-  .mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem; }
-  .mode-btn { background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:'Space Mono',monospace; font-size:1.3rem; padding:1.2rem; cursor:pointer; text-align:center; transition:all 0.15s; }
-  .mode-btn:hover,.mode-btn.selected { border-color:var(--accent); background:rgba(107,140,174,0.1); }
-  .mode-icon { font-size:1.8rem; display:block; margin-bottom:0.5rem; }
-  .mode-label { font-family:'Syne',sans-serif; font-weight:700; display:block; margin-bottom:0.3rem; }
-  .mode-desc { color:var(--boxselct); font-size:0.9rem; line-height:1.4; }
-  .start-btn { background:var(--accent); border:none; color:#14100f; font-family:'Syne',sans-serif; font-weight:600; font-size:1.2rem; letter-spacing:0.12em; text-transform:uppercase; padding:1rem 3rem; cursor:pointer; transition:background 0.15s; }
-  .start-btn:hover { background:var(--accent2); }
-  @media (max-width:480px) { .options { grid-template-columns:1fr; } }
-</style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, #203622 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .title span {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin-top: 0.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2.3rem 2rem;
+      width: 140px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+    }
+
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 500;
+      color: var(--accent2);
+      display: block;
+      line-height: 1;
+    }
+
+    .progress-wrap {
+      height: 3px;
+      background: var(--border);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.4s ease;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .q-counter {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--yellow);
+    }
+
+    .q-type-badge {
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      border: 1.1px solid var(--accent);
+      color: var(--typebadge);
+    }
+
+    .question-text {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+
+    .verb-highlight {
+      color: var(--verbqw);
+      font-style: italic;
+    }
+
+    .q-hint {
+      font-size: 0.7rem;
+      color: var(--accent2);
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .option-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(107, 140, 174, 0.08);
+    }
+
+    .option-btn.correct {
+      border-color: var(--correct);
+      background: rgba(76, 175, 125, 0.12);
+      color: var(--correct);
+    }
+
+    .option-btn.wrong {
+      border-color: var(--wrong);
+      background: rgba(224, 92, 92, 0.1);
+      color: var(--wrong);
+      text-decoration: line-through;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-right: 0.5rem;
+    }
+
+    .option-btn.correct .option-letter {
+      color: var(--correct);
+    }
+
+    .option-btn.wrong .option-letter {
+      color: var(--wrong);
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      font-size: 0.75rem;
+      border-left: 3px solid transparent;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .feedback.show {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .feedback.correct-fb {
+      border-color: var(--correct);
+      background: rgba(76, 175, 125, 0.06);
+      color: var(--correct);
+    }
+
+    .feedback.wrong-fb {
+      border-color: var(--wrong);
+      background: rgba(224, 92, 92, 0.06);
+      color: var(--accent2);
+    }
+
+    .next-btn {
+      display: none;
+      width: 100%;
+      background: var(--accent);
+      border: none;
+      color: #0f0f14;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 1.5rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.15s;
+    }
+
+    .next-btn:hover {
+      background: var(--accent2);
+    }
+
+    .next-btn.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Verb reference card */
+    .verb-card {
+      display: none;
+      margin-top: 1rem;
+      border: 1px solid var(--border);
+      background: rgba(107, 140, 174, 0.04);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .verb-card.show {
+      display: block;
+    }
+
+    .verb-card-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.6rem 1rem 0.3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .verb-card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .verb-col {
+      padding: 0.9rem 1rem;
+      border-right: 1px solid var(--border);
+    }
+
+    .verb-col:last-child {
+      border-right: none;
+    }
+
+    .verb-col-header {
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+      display: block;
+    }
+
+    .verb-col-en {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent2);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .verb-col-es {
+      font-size: 0.72rem;
+      color: var(--yellow);
+      display: block;
+      line-height: 1.4;
+    }
+
+    @media (max-width:540px) {
+      .verb-card-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .verb-col {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .verb-col:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .credit {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .credit span {
+      color: var(--accent);
+    }
+
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-screen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--yellow), var(--accent2));
+    }
+
+    .result-screen.show {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result-score {
+      font-family: 'Syne', sans-serif;
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--accent2);
+      line-height: 1;
+    }
+
+    .result-total {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .result-msg {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .result-stars {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.2em;
+    }
+
+    .result-breakdown {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .breakdown-item {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+    }
+
+    .breakdown-item .num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: block;
+      line-height: 1;
+    }
+
+    .breakdown-item.correct-stat .num {
+      color: var(--correct);
+    }
+
+    .breakdown-item.wrong-stat .num {
+      color: var(--wrong);
+    }
+
+    .restart-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.9rem 2.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .restart-btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .mode-screen {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .mode-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .mode-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 1.3rem;
+      padding: 1.2rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .mode-btn:hover,
+    .mode-btn.selected {
+      border-color: var(--accent);
+      background: rgba(107, 140, 174, 0.1);
+    }
+
+    .mode-icon {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .mode-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+
+    .mode-desc {
+      color: var(--boxselct);
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      background: var(--accent);
+      border: none;
+      color: #14100f;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 1rem 3rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .start-btn:hover {
+      background: var(--accent2);
+    }
+
+    @media (max-width:480px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div style="margin-bottom:20px;">
-  <a href="index.html" style="color:white;text-decoration:none;">
-  ⬅ Volver al diccionario
-  </a>
-</div>
-
-<div class="container">
-  <header>
-    <div class="title">VERB<span>QUIZ</span></div>
-    <div class="subtitle">Regular &amp; Irregular English Verbs</div>
-    <div class="credit">Created by <span>• Isaac-maker</span></div>
-  </header>
-
-  <div class="mode-screen" id="modeScreen">
-    <div class="mode-title">Select Quiz Mode</div>
-    <div class="mode-grid">
-      <button class="mode-btn selected" data-mode="past" onclick="selectMode(this,'past')">
-        <span class="mode-icon">⏮</span><span class="mode-label">Simple Past</span>
-        <span class="mode-desc">Identify the past tense form of a verb</span>
-      </button>
-      <button class="mode-btn" data-mode="participle" onclick="selectMode(this,'participle')">
-        <span class="mode-icon">✳</span><span class="mode-label">Past Participle</span>
-        <span class="mode-desc">Identify the past participle form</span>
-      </button>
-      <button class="mode-btn" data-mode="spanish" onclick="selectMode(this,'spanish')">
-        <span class="mode-icon">🌎</span><span class="mode-label">Translate → ES</span>
-        <span class="mode-desc">Match the verb to its Spanish meaning</span>
-      </button>
-      <button class="mode-btn" data-mode="mixed" onclick="selectMode(this,'mixed')">
-        <span class="mode-icon">🎲</span><span class="mode-label">Mixed Mode</span>
-        <span class="mode-desc">Random questions from all categories</span>
-      </button>
-    </div>
-    <button class="start-btn" onclick="startQuiz()">START QUIZ →</button>
+  <div style="margin-bottom:20px;">
+    <a href="index.html" style="color:white;text-decoration:none;">
+      ⬅ Volver al diccionario
+    </a>
   </div>
 
-  <div id="quizScreen" style="display:none">
-    <div class="stats">
-      <div class="stat-box"><span class="stat-label">Score</span><span class="stat-value" id="statScore">0</span></div>
-      <div class="stat-box"><span class="stat-label">Correct</span><span class="stat-value" id="statCorrect" style="color:var(--correct)">0</span></div>
-      <div class="stat-box"><span class="stat-label">Wrong</span><span class="stat-value" id="statWrong" style="color:var(--wrong)">0</span></div>
-      <div class="stat-box"><span class="stat-label">Streak</span><span class="stat-value" id="statStreak" style="color:var(--yellow)">0</span></div>
-    </div>
-    <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
-    <div class="card">
-      <div class="question-meta">
-        <span class="q-counter" id="qCounter">Q 1 / 30</span>
-        <span class="q-type-badge" id="qTypeBadge">IRREGULAR</span>
+  <div class="container">
+    <header>
+      <div class="title">VERB<span>QUIZ</span></div>
+      <div class="subtitle">Regular &amp; Irregular English Verbs</div>
+      <div class="credit">Created by <span>• Isaac-maker</span></div>
+    </header>
+
+    <div class="mode-screen" id="modeScreen">
+      <div class="mode-title">Select Quiz Mode</div>
+      <div class="mode-grid">
+        <button class="mode-btn selected" data-mode="past" onclick="selectMode(this,'past')">
+          <span class="mode-icon">⏮</span><span class="mode-label">Simple Past</span>
+          <span class="mode-desc">Identify the past tense form of a verb</span>
+        </button>
+        <button class="mode-btn" data-mode="participle" onclick="selectMode(this,'participle')">
+          <span class="mode-icon">✳</span><span class="mode-label">Past Participle</span>
+          <span class="mode-desc">Identify the past participle form</span>
+        </button>
+        <button class="mode-btn" data-mode="spanish" onclick="selectMode(this,'spanish')">
+          <span class="mode-icon">🌎</span><span class="mode-label">Translate → ES</span>
+          <span class="mode-desc">Match the verb to its Spanish meaning</span>
+        </button>
+        <button class="mode-btn" data-mode="mixed" onclick="selectMode(this,'mixed')">
+          <span class="mode-icon">🎲</span><span class="mode-label">Mixed Mode</span>
+          <span class="mode-desc">Random questions from all categories</span>
+        </button>
       </div>
-      <div class="question-text" id="questionText"></div>
-      <div class="q-hint" id="qHint"></div>
-      <div class="options" id="optionsContainer"></div>
-      <div class="feedback" id="feedback"></div>
-      <div class="verb-card" id="verbCard">
-        <div class="verb-card-title">Full verb reference</div>
-        <div class="verb-card-grid">
-          <div class="verb-col">
-            <span class="verb-col-header">Infinitive (Present)</span>
-            <span class="verb-col-en" id="vcBase">-</span>
-            <span class="verb-col-es" id="vcEsPres">-</span>
-          </div>
-          <div class="verb-col">
-            <span class="verb-col-header">Simple Past</span>
-            <span class="verb-col-en" id="vcPast">-</span>
-            <span class="verb-col-es" id="vcEsPast">-</span>
-          </div>
-          <div class="verb-col">
-            <span class="verb-col-header">Past Participle</span>
-            <span class="verb-col-en" id="vcParticiple">-</span>
-            <span class="verb-col-es" id="vcEsPart">-</span>
+      <button class="start-btn" onclick="startQuiz()">START QUIZ →</button>
+    </div>
+
+    <div id="quizScreen" style="display:none">
+      <div class="stats">
+        <div class="stat-box"><span class="stat-label">Score</span><span class="stat-value" id="statScore">0</span>
+        </div>
+        <div class="stat-box"><span class="stat-label">Correct</span><span class="stat-value" id="statCorrect"
+            style="color:var(--correct)">0</span></div>
+        <div class="stat-box"><span class="stat-label">Wrong</span><span class="stat-value" id="statWrong"
+            style="color:var(--wrong)">0</span></div>
+        <div class="stat-box"><span class="stat-label">Streak</span><span class="stat-value" id="statStreak"
+            style="color:var(--yellow)">0</span></div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar" style="width:0%"></div>
+      </div>
+      <div class="card">
+        <div class="question-meta">
+          <span class="q-counter" id="qCounter">Q 1 / 30</span>
+          <span class="q-type-badge" id="qTypeBadge">IRREGULAR</span>
+        </div>
+        <div class="question-text" id="questionText"></div>
+        <div class="q-hint" id="qHint"></div>
+        <div class="options" id="optionsContainer"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="verb-card" id="verbCard">
+          <div class="verb-card-title">Full verb reference</div>
+          <div class="verb-card-grid">
+            <div class="verb-col">
+              <span class="verb-col-header">Infinitive (Present)</span>
+              <span class="verb-col-en" id="vcBase">-</span>
+              <span class="verb-col-es" id="vcEsPres">-</span>
+            </div>
+            <div class="verb-col">
+              <span class="verb-col-header">Simple Past</span>
+              <span class="verb-col-en" id="vcPast">-</span>
+              <span class="verb-col-es" id="vcEsPast">-</span>
+            </div>
+            <div class="verb-col">
+              <span class="verb-col-header">Past Participle</span>
+              <span class="verb-col-en" id="vcParticiple">-</span>
+              <span class="verb-col-es" id="vcEsPart">-</span>
+            </div>
           </div>
         </div>
       </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">NEXT QUESTION →</button>
     </div>
-    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">NEXT QUESTION →</button>
+
+    <div class="result-screen" id="resultScreen">
+      <div class="result-stars" id="resultStars">⭐</div>
+      <div class="result-score" id="resultScore">0</div>
+      <div class="result-total" id="resultTotal">/ 30 correct</div>
+      <div class="result-msg" id="resultMsg"></div>
+      <div class="result-breakdown">
+        <div class="breakdown-item correct-stat"><span class="num" id="resCorrect">0</span>Correct</div>
+        <div class="breakdown-item wrong-stat"><span class="num" id="resWrong">0</span>Wrong</div>
+        <div class="breakdown-item"><span class="num" id="resBestStreak">0</span>Best Streak</div>
+      </div>
+      <button class="restart-btn" onclick="restart()">↺ PLAY AGAIN</button>
+    </div>
+
+    <div class="credit" style="margin-top:2rem">Created by <span>• Isaac-maker</span></div>
   </div>
 
-  <div class="result-screen" id="resultScreen">
-    <div class="result-stars" id="resultStars">⭐</div>
-    <div class="result-score" id="resultScore">0</div>
-    <div class="result-total" id="resultTotal">/ 30 correct</div>
-    <div class="result-msg" id="resultMsg"></div>
-    <div class="result-breakdown">
-      <div class="breakdown-item correct-stat"><span class="num" id="resCorrect">0</span>Correct</div>
-      <div class="breakdown-item wrong-stat"><span class="num" id="resWrong">0</span>Wrong</div>
-      <div class="breakdown-item"><span class="num" id="resBestStreak">0</span>Best Streak</div>
-    </div>
-    <button class="restart-btn" onclick="restart()">↺ PLAY AGAIN</button>
-  </div>
+  <script>
 
-  <div class="credit" style="margin-top:2rem">Created by <span>• Isaac-maker</span></div>
-</div>
+    const irregularVerbs = [
+      { base: "Arise", past: "Arose", participle: "Arisen", esPres: "Surgir / Levantarse", esPast: "Surgió / Se levantó", esPart: "Surgido / Levantado" },
+      { base: "Awake", past: "Awoke", participle: "Awoken", esPres: "Despertarse", esPast: "Se despertó", esPart: "Despertado" },
+      { base: "Be", past: "Was / Were", participle: "Been", esPres: "Ser / Estar", esPast: "Fue / Estuvo", esPart: "Sido / Estado" },
+      { base: "Bear", past: "Bore", participle: "Borne / Born", esPres: "Soportar / Dar a luz", esPast: "Soportó / Dio a luz", esPart: "Soportado / Nacido" },
+      { base: "Beat", past: "Beat", participle: "Beaten", esPres: "Golpear", esPast: "Golpeó", esPart: "Golpeado" },
+      { base: "Become", past: "Became", participle: "Become", esPres: "Llegar a ser", esPast: "Llegó a ser", esPart: "Llegado a ser" },
+      { base: "Begin", past: "Began", participle: "Begun", esPres: "Empezar", esPast: "Empezó", esPart: "Empezado" },
+      { base: "Bend", past: "Bent", participle: "Bent", esPres: "Doblar", esPast: "Dobló", esPart: "Doblado" },
+      { base: "Bet", past: "Bet", participle: "Bet", esPres: "Apostar", esPast: "Apostó", esPart: "Apostado" },
+      { base: "Bind", past: "Bound", participle: "Bound", esPres: "Atar / Encuadernar", esPast: "Ató / Encuadernó", esPart: "Atado / Encuadernado" },
+      { base: "Bid", past: "Bid", participle: "Bid", esPres: "Pujar", esPast: "Pujó", esPart: "Pujado" },
+      { base: "Bite", past: "Bit", participle: "Bitten", esPres: "Morder", esPast: "Mordió", esPart: "Mordido" },
+      { base: "Bleed", past: "Bled", participle: "Bled", esPres: "Sangrar", esPast: "Sangró", esPart: "Sangrado" },
+      { base: "Blow", past: "Blew", participle: "Blown", esPres: "Soplar", esPast: "Sopló", esPart: "Soplado" },
+      { base: "Break", past: "Broke", participle: "Broken", esPres: "Romper", esPast: "Rompió", esPart: "Roto" },
+      { base: "Breed", past: "Bred", participle: "Bred", esPres: "Criar", esPast: "Crió", esPart: "Criado" },
+      { base: "Bring", past: "Brought", participle: "Brought", esPres: "Traer / Llevar", esPast: "Trajo / Llevó", esPart: "Traído / Llevado" },
+      { base: "Broadcast", past: "Broadcast", participle: "Broadcast", esPres: "Transmitir / Radiar", esPast: "Transmitió / Radió", esPart: "Transmitido / Radiado" },
+      { base: "Build", past: "Built", participle: "Built", esPres: "Construir / Edificar", esPast: "Construyó / Edificó", esPart: "Construido / Edificado" },
+      { base: "Burn", past: "Burnt / Burned", participle: "Burnt / Burned", esPres: "Quemar", esPast: "Quemó", esPart: "Quemado" },
+      { base: "Burst", past: "Burst", participle: "Burst", esPres: "Reventar", esPast: "Reventó", esPart: "Reventado" },
+      { base: "Buy", past: "Bought", participle: "Bought", esPres: "Comprar", esPast: "Compró", esPart: "Comprado" },
+      { base: "Cast", past: "Cast", participle: "Cast", esPres: "Arrojar / Lanzar", esPast: "Arrojó / Lanzó", esPart: "Arrojado / Lanzado" },
+      { base: "Catch", past: "Caught", participle: "Caught", esPres: "Coger / Atrapar", esPast: "Cogió / Atrapó", esPart: "Cogido / Atrapado" },
+      { base: "Choose", past: "Chose", participle: "Chosen", esPres: "Elegir", esPast: "Eligió", esPart: "Elegido" },
+      { base: "Cling", past: "Clung", participle: "Clung", esPres: "Agarrarse / Adherirse", esPast: "Se agarró / Se adhirió", esPart: "Agarrado / Adherido" },
+      { base: "Come", past: "Came", participle: "Come", esPres: "Venir", esPast: "Vino", esPart: "Venido" },
+      { base: "Cost", past: "Cost", participle: "Cost", esPres: "Costar", esPast: "Costó", esPart: "Costado" },
+      { base: "Creep", past: "Crept", participle: "Crept", esPres: "Arrastrarse / Reptar", esPast: "Se arrastró / Reptó", esPart: "Arrastrado / Reptado" },
+      { base: "Cut", past: "Cut", participle: "Cut", esPres: "Cortar", esPast: "Cortó", esPart: "Cortado" },
+      { base: "Deal", past: "Dealt", participle: "Dealt", esPres: "Tratar / Repartir", esPast: "Trató / Repartió", esPart: "Tratado / Repartido" },
+      { base: "Dig", past: "Dug", participle: "Dug", esPres: "Cavar", esPast: "Cavó", esPart: "Cavado" },
+      { base: "Do", past: "Did", participle: "Done", esPres: "Hacer", esPast: "Hizo", esPart: "Hecho" },
+      { base: "Draw", past: "Drew", participle: "Drawn", esPres: "Dibujar / Jalar", esPast: "Dibujó / Jaló", esPart: "Dibujado / Jalado" },
+      { base: "Dream", past: "Dreamt / Dreamed", participle: "Dreamt / Dreamed", esPres: "Soñar", esPast: "Soñó", esPart: "Soñado" },
+      { base: "Drink", past: "Drank", participle: "Drunk", esPres: "Beber", esPast: "Bebió", esPart: "Bebido" },
+      { base: "Drive", past: "Drove", participle: "Driven", esPres: "Conducir / Manejar", esPast: "Condujo / Manejó", esPart: "Conducido / Manejado" },
+      { base: "Eat", past: "Ate", participle: "Eaten", esPres: "Comer", esPast: "Comió", esPart: "Comido" },
+      { base: "Fall", past: "Fell", participle: "Fallen", esPres: "Caer", esPast: "Cayó", esPart: "Caído" },
+      { base: "Feed", past: "Fed", participle: "Fed", esPres: "Alimentar", esPast: "Alimentó", esPart: "Alimentado" },
+      { base: "Feel", past: "Felt", participle: "Felt", esPres: "Sentir", esPast: "Sintió", esPart: "Sentido" },
+      { base: "Fight", past: "Fought", participle: "Fought", esPres: "Luchar / Pelear", esPast: "Luchó / Peleó", esPart: "Luchado / Peleado" },
+      { base: "Find", past: "Found", participle: "Found", esPres: "Encontrar", esPast: "Encontró", esPart: "Encontrado" },
+      { base: "Flee", past: "Fled", participle: "Fled", esPres: "Huir", esPast: "Huyó", esPart: "Huido" },
+      { base: "Fly", past: "Flew", participle: "Flown", esPres: "Volar", esPast: "Voló", esPart: "Volado" },
+      { base: "Forbid", past: "Forbade", participle: "Forbidden", esPres: "Prohibir", esPast: "Prohibió", esPart: "Prohibido" },
+      { base: "Forget", past: "Forgot", participle: "Forgotten", esPres: "Olvidar", esPast: "Olvidó", esPart: "Olvidado" },
+      { base: "Forgive", past: "Forgave", participle: "Forgiven", esPres: "Perdonar", esPast: "Perdonó", esPart: "Perdonado" },
+      { base: "Freeze", past: "Froze", participle: "Frozen", esPres: "Helar / Congelar", esPast: "Heló / Congeló", esPart: "Helado / Congelado" },
+      { base: "Get", past: "Got", participle: "Got / Gotten", esPres: "Obtener / Conseguir", esPast: "Obtuvo / Consiguió", esPart: "Obtenido / Conseguido" },
+      { base: "Give", past: "Gave", participle: "Given", esPres: "Dar", esPast: "Dio", esPart: "Dado" },
+      { base: "Go", past: "Went", participle: "Gone", esPres: "Ir", esPast: "Fue", esPart: "Ido" },
+      { base: "Grind", past: "Ground", participle: "Ground", esPres: "Moler", esPast: "Molió", esPart: "Molido" },
+      { base: "Grow", past: "Grew", participle: "Grown", esPres: "Crecer", esPast: "Creció", esPart: "Crecido" },
+      { base: "Hang", past: "Hung", participle: "Hung", esPres: "Colgar", esPast: "Colgó", esPart: "Colgado" },
+      { base: "Have", past: "Had", participle: "Had", esPres: "Haber / Tener", esPast: "Hubo / Tuvo", esPart: "Habido / Tenido" },
+      { base: "Hear", past: "Heard", participle: "Heard", esPres: "Oír", esPast: "Oyó", esPart: "Oído" },
+      { base: "Hide", past: "Hid", participle: "Hidden", esPres: "Ocultar / Esconder", esPast: "Ocultó / Escondió", esPart: "Ocultado / Escondido" },
+      { base: "Hit", past: "Hit", participle: "Hit", esPres: "Golpear", esPast: "Golpeó", esPart: "Golpeado" },
+      { base: "Hold", past: "Held", participle: "Held", esPres: "Agarrar / Sostener", esPast: "Agarró / Sostuvo", esPart: "Agarrado / Sostenido" },
+      { base: "Hurt", past: "Hurt", participle: "Hurt", esPres: "Herir / Doler", esPast: "Hirió / Dolió", esPart: "Herido / Dolido" },
+      { base: "Keep", past: "Kept", participle: "Kept", esPres: "Conservar / Guardar", esPast: "Conservó / Guardó", esPart: "Conservado / Guardado" },
+      { base: "Kneel", past: "Knelt", participle: "Knelt", esPres: "Arrodillarse", esPast: "Se arrodilló", esPart: "Arrodillado" },
+      { base: "Knit", past: "Knit", participle: "Knit", esPres: "Tejer / Hacer punto", esPast: "Tejió", esPart: "Tejido" },
+      { base: "Know", past: "Knew", participle: "Known", esPres: "Saber / Conocer", esPast: "Supo / Conoció", esPart: "Sabido / Conocido" },
+      { base: "Lay", past: "Laid", participle: "Laid", esPres: "Poner / Colocar", esPast: "Puso / Colocó", esPart: "Puesto / Colocado" },
+      { base: "Lead", past: "Led", participle: "Led", esPres: "Liderar / Conducir", esPast: "Lideró / Condujo", esPart: "Liderado / Conducido" },
+      { base: "Lean", past: "Leant", participle: "Leant", esPres: "Apoyarse / Inclinarse", esPast: "Se apoyó / Se inclinó", esPart: "Apoyado / Inclinado" },
+      { base: "Leap", past: "Leapt", participle: "Leapt", esPres: "Brincar / Saltar", esPast: "Brincó / Saltó", esPart: "Brincado / Saltado" },
+      { base: "Learn", past: "Learnt / Learned", participle: "Learnt / Learned", esPres: "Aprender", esPast: "Aprendió", esPart: "Aprendido" },
+      { base: "Leave", past: "Left", participle: "Left", esPres: "Dejar / Salir", esPast: "Dejó / Salió", esPart: "Dejado / Salido" },
+      { base: "Lend", past: "Lent", participle: "Lent", esPres: "Prestar", esPast: "Prestó", esPart: "Prestado" },
+      { base: "Let", past: "Let", participle: "Let", esPres: "Permitir / Dejar", esPast: "Permitió / Dejó", esPart: "Permitido / Dejado" },
+      { base: "Lie", past: "Lay", participle: "Lain", esPres: "Echarse / Acostarse", esPast: "Se echó / Se acostó", esPart: "Echado / Acostado" },
+      { base: "Light", past: "Lit", participle: "Lit", esPres: "Encender / Iluminar", esPast: "Encendió / Iluminó", esPart: "Encendido / Iluminado" },
+      { base: "Lose", past: "Lost", participle: "Lost", esPres: "Perder", esPast: "Perdió", esPart: "Perdido" },
+      { base: "Make", past: "Made", participle: "Made", esPres: "Hacer / Fabricar", esPast: "Hizo / Fabricó", esPart: "Hecho / Fabricado" },
+      { base: "Mean", past: "Meant", participle: "Meant", esPres: "Significar / Querer decir", esPast: "Significó / Quiso decir", esPart: "Significado" },
+      { base: "Meet", past: "Met", participle: "Met", esPres: "Encontrar / Conocer", esPast: "Encontró / Conoció", esPart: "Encontrado / Conocido" },
+      { base: "Mistake", past: "Mistook", participle: "Mistaken", esPres: "Equivocar / Confundir", esPast: "Equivocó / Confundió", esPart: "Equivocado / Confundido" },
+      { base: "Overcome", past: "Overcame", participle: "Overcome", esPres: "Vencer / Superar", esPast: "Venció / Superó", esPart: "Vencido / Superado" },
+      { base: "Pay", past: "Paid", participle: "Paid", esPres: "Pagar", esPast: "Pagó", esPart: "Pagado" },
+      { base: "Put", past: "Put", participle: "Put", esPres: "Poner / Colocar", esPast: "Puso / Colocó", esPart: "Puesto / Colocado" },
+      { base: "Read", past: "Read", participle: "Read", esPres: "Leer", esPast: "Leyó", esPart: "Leído" },
+      { base: "Ride", past: "Rode", participle: "Ridden", esPres: "Montar / Cabalgar", esPast: "Montó / Cabalgó", esPart: "Montado / Cabalgado" },
+      { base: "Ring", past: "Rang", participle: "Rung", esPres: "Llamar / Sonar", esPast: "Llamó / Sonó", esPart: "Llamado / Sonado" },
+      { base: "Rise", past: "Rose", participle: "Risen", esPres: "Levantarse / Subir", esPast: "Se levantó / Subió", esPart: "Levantado / Subido" },
+      { base: "Run", past: "Ran", participle: "Run", esPres: "Correr", esPast: "Corrió", esPart: "Corrido" },
+      { base: "Say", past: "Said", participle: "Said", esPres: "Decir", esPast: "Dijo", esPart: "Dicho" },
+      { base: "See", past: "Saw", participle: "Seen", esPres: "Ver", esPast: "Vio", esPart: "Visto" },
+      { base: "Seek", past: "Sought", participle: "Sought", esPres: "Buscar", esPast: "Buscó", esPart: "Buscado" },
+      { base: "Sell", past: "Sold", participle: "Sold", esPres: "Vender", esPast: "Vendió", esPart: "Vendido" },
+      { base: "Send", past: "Sent", participle: "Sent", esPres: "Enviar / Mandar", esPast: "Envió / Mandó", esPart: "Enviado / Mandado" },
+      { base: "Set", past: "Set", participle: "Set", esPres: "Poner(se) / Fijar", esPast: "Se puso / Fijó", esPart: "Puesto / Fijado" },
+      { base: "Sew", past: "Sewed", participle: "Sewed / Sewn", esPres: "Coser", esPast: "Cosió", esPart: "Cosido" },
+      { base: "Shake", past: "Shook", participle: "Shaken", esPres: "Sacudir / Agitar", esPast: "Sacudió / Agitó", esPart: "Sacudido / Agitado" },
+      { base: "Shear", past: "Shore", participle: "Shorn", esPres: "Esquilar / Cortar", esPast: "Esquiló / Cortó", esPart: "Esquilado / Cortado" },
+      { base: "Shine", past: "Shone", participle: "Shone", esPres: "Brillar / Lucir", esPast: "Brilló / Lució", esPart: "Brillado / Lucido" },
+      { base: "Shoot", past: "Shot", participle: "Shot", esPres: "Disparar", esPast: "Disparó", esPart: "Disparado" },
+      { base: "Show", past: "Showed", participle: "Shown", esPres: "Mostrar / Enseñar", esPast: "Mostró / Enseñó", esPart: "Mostrado / Enseñado" },
+      { base: "Shrink", past: "Shrank", participle: "Shrunk", esPres: "Encoger", esPast: "Encogió", esPart: "Encogido" },
+      { base: "Shut", past: "Shut", participle: "Shut", esPres: "Cerrar", esPast: "Cerró", esPart: "Cerrado" },
+      { base: "Sing", past: "Sang", participle: "Sung", esPres: "Cantar", esPast: "Cantó", esPart: "Cantado" },
+      { base: "Sink", past: "Sank", participle: "Sunk", esPres: "Hundir", esPast: "Hundió", esPart: "Hundido" },
+      { base: "Sit", past: "Sat", participle: "Sat", esPres: "Sentarse", esPast: "Se sentó", esPart: "Sentado" },
+      { base: "Sleep", past: "Slept", participle: "Slept", esPres: "Dormir", esPast: "Durmió", esPart: "Dormido" },
+      { base: "Slide", past: "Slid", participle: "Slid", esPres: "Resbalar / Deslizar", esPast: "Resbaló / Deslizó", esPart: "Resbalado / Deslizado" },
+      { base: "Smell", past: "Smelt", participle: "Smelt", esPres: "Oler", esPast: "Olió", esPart: "Olido" },
+      { base: "Sow", past: "Sowed", participle: "Sowed / Sown", esPres: "Sembrar", esPast: "Sembró", esPart: "Sembrado" },
+      { base: "Speak", past: "Spoke", participle: "Spoken", esPres: "Hablar", esPast: "Habló", esPart: "Hablado" },
+      { base: "Speed", past: "Sped", participle: "Sped", esPres: "Acelerar / Ir rápido", esPast: "Aceleró / Fue rápido", esPart: "Acelerado" },
+      { base: "Spell", past: "Spelt", participle: "Spelt", esPres: "Deletrear", esPast: "Deletreó", esPart: "Deletreado" },
+      { base: "Spend", past: "Spent", participle: "Spent", esPres: "Gastar / Pasar (tiempo)", esPast: "Gastó / Pasó", esPart: "Gastado / Pasado" },
+      { base: "Spill", past: "Spilt / Spilled", participle: "Spilt / Spilled", esPres: "Derramar", esPast: "Derramó", esPart: "Derramado" },
+      { base: "Spin", past: "Spun", participle: "Spun", esPres: "Hilar / Girar", esPast: "Hiló / Giró", esPart: "Hilado / Girado" },
+      { base: "Spit", past: "Spat", participle: "Spat", esPres: "Escupir", esPast: "Escupió", esPart: "Escupido" },
+      { base: "Split", past: "Split", participle: "Split", esPres: "Hender / Partir", esPast: "Hendió / Partió", esPart: "Hendido / Partido" },
+      { base: "Spoil", past: "Spoilt / Spoiled", participle: "Spoilt / Spoiled", esPres: "Estropear / Arruinar", esPast: "Estropeó / Arruinó", esPart: "Estropeado / Arruinado" },
+      { base: "Spread", past: "Spread", participle: "Spread", esPres: "Extender / Difundir", esPast: "Extendió / Difundió", esPart: "Extendido / Difundido" },
+      { base: "Spring", past: "Sprang", participle: "Sprung", esPres: "Saltar / Brotar", esPast: "Saltó / Brotó", esPart: "Saltado / Brotado" },
+      { base: "Stand", past: "Stood", participle: "Stood", esPres: "Estar de pie / Pararse", esPast: "Estuvo de pie / Se paró", esPart: "Estando de pie / Parado" },
+      { base: "Steal", past: "Stole", participle: "Stolen", esPres: "Robar", esPast: "Robó", esPart: "Robado" },
+      { base: "Stick", past: "Stuck", participle: "Stuck", esPres: "Pegar / Adherir", esPast: "Pegó / Adhirió", esPart: "Pegado / Adherido" },
+      { base: "Sting", past: "Stung", participle: "Stung", esPres: "Picar / Aguijonear", esPast: "Picó / Aguijoneó", esPart: "Picado / Aguijoneado" },
+      { base: "Stink", past: "Stank / Stunk", participle: "Stunk", esPres: "Apestar / Heder", esPast: "Apestó / Hedió", esPart: "Apestado / Hedido" },
+      { base: "Stride", past: "Strode", participle: "Stridden", esPres: "Dar zancadas", esPast: "Dio zancadas", esPart: "Dado zancadas" },
+      { base: "Strike", past: "Struck", participle: "Struck", esPres: "Golpear / Atacar", esPast: "Golpeó / Atacó", esPart: "Golpeado / Atacado" },
+      { base: "Swear", past: "Swore", participle: "Sworn", esPres: "Jurar / Maldecir", esPast: "Juró / Maldijo", esPart: "Jurado / Maldecido" },
+      { base: "Sweat", past: "Sweat", participle: "Sweat", esPres: "Sudar", esPast: "Sudó", esPart: "Sudado" },
+      { base: "Sweep", past: "Swept", participle: "Swept", esPres: "Barrer", esPast: "Barrió", esPart: "Barrido" },
+      { base: "Swell", past: "Swelled", participle: "Swollen", esPres: "Hinchar / Inflamar", esPast: "Hinchó / Inflamó", esPart: "Hinchado / Inflamado" },
+      { base: "Swim", past: "Swam", participle: "Swum", esPres: "Nadar", esPast: "Nadó", esPart: "Nadado" },
+      { base: "Swing", past: "Swung", participle: "Swung", esPres: "Columpiarse / Oscilar", esPast: "Se columpió / Osciló", esPart: "Columpiado / Oscilado" },
+      { base: "Take", past: "Took", participle: "Taken", esPres: "Tomar / Coger", esPast: "Tomó / Cogió", esPart: "Tomado / Cogido" },
+      { base: "Teach", past: "Taught", participle: "Taught", esPres: "Enseñar", esPast: "Enseñó", esPart: "Enseñado" },
+      { base: "Tear", past: "Tore", participle: "Torn", esPres: "Rasgar / Romper", esPast: "Rasgó / Rompió", esPart: "Rasgado / Roto" },
+      { base: "Tell", past: "Told", participle: "Told", esPres: "Decir / Contar", esPast: "Dijo / Contó", esPart: "Dicho / Contado" },
+      { base: "Think", past: "Thought", participle: "Thought", esPres: "Pensar", esPast: "Pensó", esPart: "Pensado" },
+      { base: "Throw", past: "Threw", participle: "Thrown", esPres: "Arrojar / Lanzar", esPast: "Arrojó / Lanzó", esPart: "Arrojado / Lanzado" },
+      { base: "Thrust", past: "Thrust", participle: "Thrust", esPres: "Introducir / Empujar", esPast: "Introdujo / Empujó", esPart: "Introducido / Empujado" },
+      { base: "Tread", past: "Trod", participle: "Trodden", esPres: "Pisar / Hollar", esPast: "Pisó / Holló", esPart: "Pisado / Hollado" },
+      { base: "Undergo", past: "Underwent", participle: "Undergone", esPres: "Sufrir / Someterse a", esPast: "Sufrió / Se sometió a", esPart: "Sufrido / Sometido" },
+      { base: "Understand", past: "Understood", participle: "Understood", esPres: "Entender / Comprender", esPast: "Entendió / Comprendió", esPart: "Entendido / Comprendido" },
+      { base: "Undertake", past: "Undertook", participle: "Undertaken", esPres: "Emprender / Comprometerse", esPast: "Emprendió / Se comprometió", esPart: "Emprendido / Comprometido" },
+      { base: "Wake", past: "Woke", participle: "Woken", esPres: "Despertar", esPast: "Despertó", esPart: "Despertado" },
+      { base: "Wear", past: "Wore", participle: "Worn", esPres: "Llevar puesto / Usar", esPast: "Llevó puesto / Usó", esPart: "Llevado puesto / Usado" },
+      { base: "Weave", past: "Wove", participle: "Woven", esPres: "Tejer", esPast: "Tejió", esPart: "Tejido" },
+      { base: "Weep", past: "Wept", participle: "Wept", esPres: "Llorar", esPast: "Lloró", esPart: "Llorado" },
+      { base: "Wet", past: "Wet", participle: "Wet", esPres: "Mojar / Humedecer", esPast: "Mojó / Humedeció", esPart: "Mojado / Humedecido" },
+      { base: "Win", past: "Won", participle: "Won", esPres: "Ganar", esPast: "Ganó", esPart: "Ganado" },
+      { base: "Wind", past: "Wound", participle: "Wound", esPres: "Enrollar / Bobinar", esPast: "Enrolló / Bobinó", esPart: "Enrollado / Bobinado" },
+      { base: "Withdraw", past: "Withdrew", participle: "Withdrawn", esPres: "Retirar(se)", esPast: "Se retiró / Retiró", esPart: "Retirado" },
+      { base: "Wring", past: "Wrung", participle: "Wrung", esPres: "Torcer / Retorcer", esPast: "Torció / Retorció", esPart: "Torcido / Retorcido" },
+      { base: "Write", past: "Wrote", participle: "Written", esPres: "Escribir", esPast: "Escribió", esPart: "Escrito" },
+      { base: "Abide", past: "Abode / Abided", participle: "Abode / Abided", esPres: "Tolerar / Soportar", esPast: "Toleró / Soportó", esPart: "Tolerado / Soportado" },
+      { base: "Befall", past: "Befell", participle: "Befallen", esPres: "Ocurrirle / Sucederle", esPast: "Le ocurrió / Le sucedió", esPart: "Ocurrido / Sucedido" },
+      { base: "Behold", past: "Beheld", participle: "Beheld", esPres: "Contemplar / Observar", esPast: "Contempló / Observó", esPart: "Contemplado / Observado" },
+      { base: "Beset", past: "Beset", participle: "Beset", esPres: "Asediar / Acosar", esPast: "Asedió / Acosó", esPart: "Asediado / Acosado" },
+      { base: "Clothe", past: "Clothed / Clad", participle: "Clothed / Clad", esPres: "Vestir / Cubrir", esPast: "Vistió / Cubrió", esPart: "Vestido / Cubierto" },
+      { base: "Dare", past: "Dared / Durst", participle: "Dared", esPres: "Atreverse / Osar", esPast: "Se atrevió / Osó", esPart: "Atrevido / Osado" },
+      { base: "Dive", past: "Dove / Dived", participle: "Dived", esPres: "Bucear / Zambullirse", esPast: "Buceó / Se zambulló", esPart: "Buceado / Zambullido" },
+      { base: "Dwell", past: "Dwelt / Dwelled", participle: "Dwelt / Dwelled", esPres: "Vivir / Residir / Morar", esPast: "Vivió / Residió / Moró", esPart: "Vivido / Residido / Morado" },
+      { base: "Fit", past: "Fit / Fitted", participle: "Fit / Fitted", esPres: "Caber / Ajustar / Quedar bien", esPast: "Cabió / Ajustó / Quedó bien", esPart: "Cabido / Ajustado" },
+      { base: "Fling", past: "Flung", participle: "Flung", esPres: "Arrojar / Lanzar con fuerza", esPast: "Arrojó / Lanzó", esPart: "Arrojado / Lanzado" },
+      { base: "Forbear", past: "Forbore", participle: "Forborne", esPres: "Abstenerse / Aguantar", esPast: "Se abstuvo / Aguantó", esPart: "Abstenido / Aguantado" },
+      { base: "Forego", past: "Forewent", participle: "Foregone", esPres: "Renunciar / Prescindir", esPast: "Renunció / Prescindió", esPart: "Renunciado / Prescindido" },
+      { base: "Foresee", past: "Foresaw", participle: "Foreseen", esPres: "Prever / Anticipar", esPast: "Previó / Anticipó", esPart: "Previsto / Anticipado" },
+      { base: "Forsake", past: "Forsook", participle: "Forsaken", esPres: "Abandonar / Renunciar", esPast: "Abandonó / Renunció", esPart: "Abandonado / Renunciado" },
+      { base: "Hamstring", past: "Hamstrung", participle: "Hamstrung", esPres: "Paralizar / Obstaculizar", esPast: "Paralizó / Obstaculizó", esPart: "Paralizado / Obstaculizado" },
+      { base: "Input", past: "Input / Inputted", participle: "Input / Inputted", esPres: "Introducir datos / Ingresar", esPast: "Introdujo datos / Ingresó", esPart: "Introducido / Ingresado" },
+      { base: "Inset", past: "Inset", participle: "Inset", esPres: "Insertar / Incrustar", esPast: "Insertó / Incrustó", esPart: "Insertado / Incrustado" },
+      { base: "Interweave", past: "Interwove", participle: "Interwoven", esPres: "Entrelazar / Combinar", esPast: "Entrelazó / Combinó", esPart: "Entrelazado / Combinado" },
+      { base: "Mislay", past: "Mislaid", participle: "Mislaid", esPres: "Extraviar / Perder", esPast: "Extravió / Perdió", esPart: "Extraviado / Perdido" },
+      { base: "Mislead", past: "Misled", participle: "Misled", esPres: "Engañar / Desorientar", esPast: "Engañó / Desorientó", esPart: "Engañado / Desorientado" },
+      { base: "Misread", past: "Misread", participle: "Misread", esPres: "Malinterpretar / Leer mal", esPast: "Malinterpretó / Leyó mal", esPart: "Malinterpretado" },
+      { base: "Offset", past: "Offset", participle: "Offset", esPres: "Compensar / Contrarrestar", esPast: "Compensó / Contrarrestó", esPart: "Compensado / Contrarrestado" },
+      { base: "Outdo", past: "Outdid", participle: "Outdone", esPres: "Superar / Aventajar", esPast: "Superó / Aventajó", esPart: "Superado / Aventajado" },
+      { base: "Outgrow", past: "Outgrew", participle: "Outgrown", esPres: "Crecer más que / Superar", esPast: "Creció más / Superó", esPart: "Crecido más / Superado" },
+      { base: "Outrun", past: "Outran", participle: "Outrun", esPres: "Correr más rápido / Superar", esPast: "Corrió más rápido / Superó", esPart: "Corrido más / Superado" },
+      { base: "Overdo", past: "Overdid", participle: "Overdone", esPres: "Exagerar / Hacer demasiado", esPast: "Exageró / Hizo demasiado", esPart: "Exagerado / Hecho demasiado" },
+      { base: "Overhear", past: "Overheard", participle: "Overheard", esPres: "Escuchar sin querer / Oír por casualidad", esPast: "Escuchó sin querer", esPart: "Escuchado sin querer" },
+      { base: "Overlap", past: "Overlapped", participle: "Overlapped", esPres: "Superponerse / Coincidir", esPast: "Se superpuso / Coincidió", esPart: "Superpuesto / Coincidido" },
+      { base: "Overrun", past: "Overran", participle: "Overrun", esPres: "Invadir / Desbordar", esPast: "Invadió / Desbordó", esPart: "Invadido / Desbordado" },
+      { base: "Oversee", past: "Oversaw", participle: "Overseen", esPres: "Supervisar / Vigilar", esPast: "Supervisó / Vigiló", esPart: "Supervisado / Vigilado" },
+      { base: "Overtake", past: "Overtook", participle: "Overtaken", esPres: "Adelantar / Superar", esPast: "Adelantó / Superó", esPart: "Adelantado / Superado" },
+      { base: "Overthrow", past: "Overthrew", participle: "Overthrown", esPres: "Derrocar / Derribar", esPast: "Derrocó / Derribó", esPart: "Derrocado / Derribado" },
+      { base: "Partake", past: "Partook", participle: "Partaken", esPres: "Participar / Tomar parte", esPast: "Participó / Tomó parte", esPart: "Participado" },
+      { base: "Prove", past: "Proved", participle: "Proved / Proven", esPres: "Probar / Demostrar", esPast: "Probó / Demostró", esPart: "Probado / Demostrado" },
+      { base: "Quit", past: "Quit / Quitted", participle: "Quit / Quitted", esPres: "Dejar / Renunciar / Salir", esPast: "Dejó / Renunció / Salió", esPart: "Dejado / Renunciado" },
+      { base: "Rebuild", past: "Rebuilt", participle: "Rebuilt", esPres: "Reconstruir", esPast: "Reconstruyó", esPart: "Reconstruido" },
+      { base: "Redo", past: "Redid", participle: "Redone", esPres: "Rehacer / Volver a hacer", esPast: "Rehízo / Volvió a hacer", esPart: "Rehecho" },
+      { base: "Remake", past: "Remade", participle: "Remade", esPres: "Rehacer / Volver a hacer", esPast: "Rehízo", esPart: "Rehecho" },
+      { base: "Reset", past: "Reset", participle: "Reset", esPres: "Restablecer / Reiniciar", esPast: "Restableció / Reinició", esPart: "Restablecido / Reiniciado" },
+      { base: "Rid", past: "Rid / Ridded", participle: "Rid / Ridded", esPres: "Deshacerse / Librarse", esPast: "Se deshizo / Se libró", esPart: "Deshecho / Librado" },
+      { base: "Saw", past: "Sawed", participle: "Sawed / Sawn", esPres: "Serrar / Aserrar", esPast: "Serró / Aserró", esPart: "Serrado / Aserrado" },
+      { base: "Shed", past: "Shed", participle: "Shed", esPres: "Desprender / Derramar / Mudar", esPast: "Desprendió / Derramó / Mudó", esPart: "Desprendido / Derramado / Mudado" },
+      { base: "Shred", past: "Shred / Shredded", participle: "Shred / Shredded", esPres: "Triturar / Desmenuzar", esPast: "Trituró / Desmenuzó", esPart: "Triturado / Desmenuzado" },
+      { base: "Slay", past: "Slew", participle: "Slain", esPres: "Matar / Asesinar", esPast: "Mató / Asesinó", esPart: "Matado / Asesinado" },
+      { base: "Sling", past: "Slung", participle: "Slung", esPres: "Lanzar / Colgar", esPast: "Lanzó / Colgó", esPart: "Lanzado / Colgado" },
+      { base: "Slink", past: "Slunk", participle: "Slunk", esPres: "Escabullirse / Moverse sigilosamente", esPast: "Se escabulló / Se movió sigilosamente", esPart: "Escabullido" },
+      { base: "Smite", past: "Smote", participle: "Smitten", esPres: "Golpear / Herir / Enamorar", esPast: "Golpeó / Hirió / Enamoró", esPart: "Golpeado / Herido / Enamorado" },
+      { base: "Sneak", past: "Sneaked / Snuck", participle: "Sneaked / Snuck", esPres: "Escabullirse / Colarse", esPast: "Se escabulló / Se coló", esPart: "Escabullido / Colado" },
+      { base: "Stave", past: "Staved / Stove", participle: "Staved / Stove", esPres: "Romper / Hundir / Prevenir", esPast: "Rompió / Hundió / Previno", esPart: "Roto / Hundido / Prevenido" },
+      { base: "Strew", past: "Strewed", participle: "Strewed / Strewn", esPres: "Esparcir / Diseminar", esPast: "Esparció / Diseminó", esPart: "Esparcido / Diseminado" },
+      { base: "String", past: "Strung", participle: "Strung", esPres: "Ensartar / Tensar / Colgar", esPast: "Ensartó / Tensó / Colgó", esPart: "Ensartado / Tensado / Colgado" },
+      { base: "Strive", past: "Strove / Strived", participle: "Striven / Strived", esPres: "Esforzarse / Luchar por", esPast: "Se esforzó / Luchó por", esPart: "Esforzado / Luchado" },
+      { base: "Sublet", past: "Sublet", participle: "Sublet", esPres: "Subarrendar / Subalquilar", esPast: "Subarrendó / Subalquiló", esPart: "Subarrendado / Subalquilado" },
+      { base: "Sunburn", past: "Sunburned / Sunburnt", participle: "Sunburned / Sunburnt", esPres: "Quemarse con el sol", esPast: "Se quemó con el sol", esPart: "Quemado con el sol" },
+      { base: "Thrive", past: "Throve / Thrived", participle: "Thriven / Thrived", esPres: "Prosperar / Florecer", esPast: "Prosperó / Floreció", esPart: "Prosperado / Florecido" },
+      { base: "Underlie", past: "Underlay", participle: "Underlain", esPres: "Subyacer / Estar debajo", esPast: "Subyació / Estuvo debajo", esPart: "Subyacido" },
+      { base: "Undermine", past: "Undermined", participle: "Undermined", esPres: "Socavar / Debilitar", esPast: "Socavó / Debilitó", esPart: "Socavado / Debilitado" },
+      { base: "Undo", past: "Undid", participle: "Undone", esPres: "Deshacer / Desatar", esPast: "Deshízo / Desató", esPart: "Deshecho / Desatado" },
+      { base: "Unwind", past: "Unwound", participle: "Unwound", esPres: "Desenrollar / Relajarse", esPast: "Desenrolló / Se relajó", esPart: "Desenrollado / Relajado" },
+      { base: "Uphold", past: "Upheld", participle: "Upheld", esPres: "Sostener / Defender / Apoyar", esPast: "Sostuvo / Defendió / Apoyó", esPart: "Sostenido / Defendido / Apoyado" },
+      { base: "Upset", past: "Upset", participle: "Upset", esPres: "Trastornar / Molestar / Volcar", esPast: "Trastornó / Molestó / Volcó", esPart: "Trastornado / Molestado / Volcado" },
+      { base: "Wed", past: "Wed / Wedded", participle: "Wed / Wedded", esPres: "Casarse / Desposar", esPast: "Se casó / Desposó", esPart: "Casado / Desposado" },
+      { base: "Withhold", past: "Withheld", participle: "Withheld", esPres: "Retener / Ocultar / Negar", esPast: "Retuvo / Ocultó / Negó", esPart: "Retenido / Ocultado / Negado" },
+      { base: "Withstand", past: "Withstood", participle: "Withstood", esPres: "Resistir / Aguantar", esPast: "Resistió / Aguantó", esPart: "Resistido / Aguantado" },
+    ];
 
-<script>
+    const regularVerbs = [
+      // ─── /id/ ────────────────────────────────────────────────────
+      { base: "Accept", past: "Accepted", participle: "Accepted", esPres: "Aceptar", esPast: "Aceptó", esPart: "Aceptado" },
+      { base: "Count", past: "Counted", participle: "Counted", esPres: "Contar", esPast: "Contó", esPart: "Contado" },
+      { base: "Date", past: "Dated", participle: "Dated", esPres: "Citar / Fechar", esPast: "Citó / Fechó", esPart: "Citado / Fechado" },
+      { base: "End", past: "Ended", participle: "Ended", esPres: "Terminar / Finalizar", esPast: "Terminó / Finalizó", esPart: "Terminado / Finalizado" },
+      { base: "Expect", past: "Expected", participle: "Expected", esPres: "Esperar / Aguardar", esPast: "Esperó / Aguardó", esPart: "Esperado / Aguardado" },
+      { base: "Intend", past: "Intended", participle: "Intended", esPres: "Intentar / Tener la intención", esPast: "Intentó / Tuvo la intención", esPart: "Intentado" },
+      { base: "Need", past: "Needed", participle: "Needed", esPres: "Necesitar", esPast: "Necesitó", esPart: "Necesitado" },
+      { base: "Plant", past: "Planted", participle: "Planted", esPres: "Plantar", esPast: "Plantó", esPart: "Plantado" },
+      { base: "Point", past: "Pointed", participle: "Pointed", esPres: "Señalar / Apuntar", esPast: "Señaló / Apuntó", esPart: "Señalado / Apuntado" },
+      { base: "Rent", past: "Rented", participle: "Rented", esPres: "Rentar / Alquilar", esPast: "Rentó / Alquiló", esPart: "Rentado / Alquilado" },
+      { base: "Repeat", past: "Repeated", participle: "Repeated", esPres: "Repetir", esPast: "Repitió", esPart: "Repetido" },
+      { base: "Resist", past: "Resisted", participle: "Resisted", esPres: "Resistir", esPast: "Resistió", esPart: "Resistido" },
+      { base: "Start", past: "Started", participle: "Started", esPres: "Empezar / Comenzar", esPast: "Empezó / Comenzó", esPart: "Empezado / Comenzado" },
+      { base: "Visit", past: "Visited", participle: "Visited", esPres: "Visitar", esPast: "Visitó", esPart: "Visitado" },
+      { base: "Wait", past: "Waited", participle: "Waited", esPres: "Esperar / Aguardar", esPast: "Esperó / Aguardó", esPart: "Esperado / Aguardado" },
+      { base: "Want", past: "Wanted", participle: "Wanted", esPres: "Querer / Desear", esPast: "Quiso / Deseó", esPart: "Querido / Deseado" },
+      { base: "Adapt", past: "Adapted", participle: "Adapted", esPres: "Adaptar", esPast: "Adaptó", esPart: "Adaptado" },
+      { base: "Add", past: "Added", participle: "Added", esPres: "Agregar / Añadir", esPast: "Agregó / Añadió", esPart: "Agregado / Añadido" },
+      { base: "Admit", past: "Admitted", participle: "Admitted", esPres: "Admitir / Confesar", esPast: "Admitió / Confesó", esPart: "Admitido / Confesado" },
+      { base: "Affect", past: "Affected", participle: "Affected", esPres: "Afectar", esPast: "Afectó", esPart: "Afectado" },
+      { base: "Arrest", past: "Arrested", participle: "Arrested", esPres: "Arrestar / Detener", esPast: "Arrestó / Detuvo", esPart: "Arrestado / Detenido" },
+      { base: "Assist", past: "Assisted", participle: "Assisted", esPres: "Asistir / Ayudar", esPast: "Asistió / Ayudó", esPart: "Asistido / Ayudado" },
+      { base: "Attract", past: "Attracted", participle: "Attracted", esPres: "Atraer", esPast: "Atrajo", esPart: "Atraído" },
+      { base: "Avoid", past: "Avoided", participle: "Avoided", esPres: "Evitar", esPast: "Evitó", esPart: "Evitado" },
+      { base: "Benefit", past: "Benefited", participle: "Benefited", esPres: "Beneficiar", esPast: "Benefició", esPart: "Beneficiado" },
+      { base: "Collect", past: "Collected", participle: "Collected", esPres: "Coleccionar / Recoger", esPast: "Coleccionó / Recogió", esPart: "Coleccionado / Recogido" },
+      { base: "Comment", past: "Commented", participle: "Commented", esPres: "Comentar", esPast: "Comentó", esPart: "Comentado" },
+      { base: "Commit", past: "Committed", participle: "Committed", esPres: "Comprometerse / Cometer", esPast: "Se comprometió / Cometió", esPart: "Comprometido / Cometido" },
+      { base: "Compete", past: "Competed", participle: "Competed", esPres: "Competir", esPast: "Compitió", esPart: "Competido" },
+      { base: "Connect", past: "Connected", participle: "Connected", esPres: "Conectar", esPast: "Conectó", esPart: "Conectado" },
+      { base: "Contact", past: "Contacted", participle: "Contacted", esPres: "Contactar", esPast: "Contactó", esPart: "Contactado" },
+      { base: "Contain", past: "Contained", participle: "Contained", esPres: "Contener", esPast: "Contuvo", esPart: "Contenido" },
+      { base: "Credit", past: "Credited", participle: "Credited", esPres: "Acreditar", esPast: "Acreditó", esPart: "Acreditado" },
+      { base: "Correct", past: "Corrected", participle: "Corrected", esPres: "Corregir", esPast: "Corrigió", esPart: "Corregido" },
+      { base: "Defend", past: "Defended", participle: "Defended", esPres: "Defender", esPast: "Defendió", esPart: "Defendido" },
+      { base: "Deposit", past: "Deposited", participle: "Deposited", esPres: "Depositar", esPast: "Depositó", esPart: "Depositado" },
+      { base: "Detect", past: "Detected", participle: "Detected", esPres: "Detectar", esPast: "Detectó", esPart: "Detectado" },
+      { base: "Edit", past: "Edited", participle: "Edited", esPres: "Editar", esPast: "Editó", esPart: "Editado" },
+      { base: "Educate", past: "Educated", participle: "Educated", esPres: "Educar", esPast: "Educó", esPart: "Educado" },
+      { base: "Exist", past: "Existed", participle: "Existed", esPres: "Existir", esPast: "Existió", esPart: "Existido" },
+      { base: "Grant", past: "Granted", participle: "Granted", esPres: "Conceder / Otorgar", esPast: "Concedió / Otorgó", esPart: "Concedido / Otorgado" },
+      { base: "Greet", past: "Greeted", participle: "Greeted", esPres: "Saludar", esPast: "Saludó", esPart: "Saludado" },
+      { base: "Indicate", past: "Indicated", participle: "Indicated", esPres: "Indicar / Señalar", esPast: "Indicó / Señaló", esPart: "Indicado / Señalado" },
+      { base: "Insert", past: "Inserted", participle: "Inserted", esPres: "Insertar", esPast: "Insertó", esPart: "Insertado" },
+      { base: "Insist", past: "Insisted", participle: "Insisted", esPres: "Insistir", esPast: "Insistió", esPart: "Insistido" },
+      { base: "Invent", past: "Invented", participle: "Invented", esPres: "Inventar", esPast: "Inventó", esPart: "Inventado" },
+      { base: "Invest", past: "Invested", participle: "Invested", esPres: "Invertir", esPast: "Invirtió", esPart: "Invertido" },
+      { base: "Limit", past: "Limited", participle: "Limited", esPres: "Limitar", esPast: "Limitó", esPart: "Limitado" },
+      { base: "List", past: "Listed", participle: "Listed", esPres: "Listar / Enumerar", esPast: "Listó / Enumeró", esPart: "Listado / Enumerado" },
+      { base: "Melt", past: "Melted", participle: "Melted", esPres: "Derretir / Fundir", esPast: "Derritió / Fundió", esPart: "Derretido / Fundido" },
+      { base: "Permit", past: "Permitted", participle: "Permitted", esPres: "Permitir", esPast: "Permitió", esPart: "Permitido" },
+      { base: "Predict", past: "Predicted", participle: "Predicted", esPres: "Predecir", esPast: "Predijo", esPart: "Predicho" },
+      { base: "Prevent", past: "Prevented", participle: "Prevented", esPres: "Prevenir / Evitar", esPast: "Previno / Evitó", esPart: "Prevenido / Evitado" },
+      { base: "Print", past: "Printed", participle: "Printed", esPres: "Imprimir", esPast: "Imprimió", esPart: "Imprimido" },
+      { base: "Protect", past: "Protected", participle: "Protected", esPres: "Proteger", esPast: "Protegió", esPart: "Protegido" },
+      { base: "Recommend", past: "Recommended", participle: "Recommended", esPres: "Recomendar", esPast: "Recomendó", esPart: "Recomendado" },
+      { base: "Represent", past: "Represented", participle: "Represented", esPres: "Representar", esPast: "Representó", esPart: "Representado" },
+      { base: "Select", past: "Selected", participle: "Selected", esPres: "Seleccionar / Elegir", esPast: "Seleccionó / Eligió", esPart: "Seleccionado / Elegido" },
+      { base: "Suggest", past: "Suggested", participle: "Suggested", esPres: "Sugerir", esPast: "Sugirió", esPart: "Sugerido" },
+      { base: "Support", past: "Supported", participle: "Supported", esPres: "Apoyar / Sostener", esPast: "Apoyó / Sostuvo", esPart: "Apoyado / Sostenido" },
+      { base: "Test", past: "Tested", participle: "Tested", esPres: "Probar / Examinar", esPast: "Probó / Examinó", esPart: "Probado / Examinado" },
+      { base: "Treat", past: "Treated", participle: "Treated", esPres: "Tratar", esPast: "Trató", esPart: "Tratado" },
+      { base: "Trust", past: "Trusted", participle: "Trusted", esPres: "Confiar", esPast: "Confió", esPart: "Confiado" },
+      { base: "Update", past: "Updated", participle: "Updated", esPres: "Actualizar", esPast: "Actualizó", esPart: "Actualizado" },
+      { base: "Vote", past: "Voted", participle: "Voted", esPres: "Votar", esPast: "Votó", esPart: "Votado" },
 
-const irregularVerbs = [
-  {base:"Arise",past:"Arose",participle:"Arisen",esPres:"Surgir / Levantarse",esPast:"Surgió / Se levantó",esPart:"Surgido / Levantado"},
-  {base:"Awake",past:"Awoke",participle:"Awoken",esPres:"Despertarse",esPast:"Se despertó",esPart:"Despertado"},
-  {base:"Be",past:"Was / Were",participle:"Been",esPres:"Ser / Estar",esPast:"Fue / Estuvo",esPart:"Sido / Estado"},
-  {base:"Bear",past:"Bore",participle:"Borne / Born",esPres:"Soportar / Dar a luz",esPast:"Soportó / Dio a luz",esPart:"Soportado / Nacido"},
-  {base:"Beat",past:"Beat",participle:"Beaten",esPres:"Golpear",esPast:"Golpeó",esPart:"Golpeado"},
-  {base:"Become",past:"Became",participle:"Become",esPres:"Llegar a ser",esPast:"Llegó a ser",esPart:"Llegado a ser"},
-  {base:"Begin",past:"Began",participle:"Begun",esPres:"Empezar",esPast:"Empezó",esPart:"Empezado"},
-  {base:"Bend",past:"Bent",participle:"Bent",esPres:"Doblar",esPast:"Dobló",esPart:"Doblado"},
-  {base:"Bet",past:"Bet",participle:"Bet",esPres:"Apostar",esPast:"Apostó",esPart:"Apostado"},
-  {base:"Bind",past:"Bound",participle:"Bound",esPres:"Atar / Encuadernar",esPast:"Ató / Encuadernó",esPart:"Atado / Encuadernado"},
-  {base:"Bid",past:"Bid",participle:"Bid",esPres:"Pujar",esPast:"Pujó",esPart:"Pujado"},
-  {base:"Bite",past:"Bit",participle:"Bitten",esPres:"Morder",esPast:"Mordió",esPart:"Mordido"},
-  {base:"Bleed",past:"Bled",participle:"Bled",esPres:"Sangrar",esPast:"Sangró",esPart:"Sangrado"},
-  {base:"Blow",past:"Blew",participle:"Blown",esPres:"Soplar",esPast:"Sopló",esPart:"Soplado"},
-  {base:"Break",past:"Broke",participle:"Broken",esPres:"Romper",esPast:"Rompió",esPart:"Roto"},
-  {base:"Breed",past:"Bred",participle:"Bred",esPres:"Criar",esPast:"Crió",esPart:"Criado"},
-  {base:"Bring",past:"Brought",participle:"Brought",esPres:"Traer / Llevar",esPast:"Trajo / Llevó",esPart:"Traído / Llevado"},
-  {base:"Broadcast",past:"Broadcast",participle:"Broadcast",esPres:"Transmitir / Radiar",esPast:"Transmitió / Radió",esPart:"Transmitido / Radiado"},
-  {base:"Build",past:"Built",participle:"Built",esPres:"Construir / Edificar",esPast:"Construyó / Edificó",esPart:"Construido / Edificado"},
-  {base:"Burn",past:"Burnt / Burned",participle:"Burnt / Burned",esPres:"Quemar",esPast:"Quemó",esPart:"Quemado"},
-  {base:"Burst",past:"Burst",participle:"Burst",esPres:"Reventar",esPast:"Reventó",esPart:"Reventado"},
-  {base:"Buy",past:"Bought",participle:"Bought",esPres:"Comprar",esPast:"Compró",esPart:"Comprado"},
-  {base:"Cast",past:"Cast",participle:"Cast",esPres:"Arrojar / Lanzar",esPast:"Arrojó / Lanzó",esPart:"Arrojado / Lanzado"},
-  {base:"Catch",past:"Caught",participle:"Caught",esPres:"Coger / Atrapar",esPast:"Cogió / Atrapó",esPart:"Cogido / Atrapado"},
-  {base:"Choose",past:"Chose",participle:"Chosen",esPres:"Elegir",esPast:"Eligió",esPart:"Elegido"},
-  {base:"Cling",past:"Clung",participle:"Clung",esPres:"Agarrarse / Adherirse",esPast:"Se agarró / Se adhirió",esPart:"Agarrado / Adherido"},
-  {base:"Come",past:"Came",participle:"Come",esPres:"Venir",esPast:"Vino",esPart:"Venido"},
-  {base:"Cost",past:"Cost",participle:"Cost",esPres:"Costar",esPast:"Costó",esPart:"Costado"},
-  {base:"Creep",past:"Crept",participle:"Crept",esPres:"Arrastrarse / Reptar",esPast:"Se arrastró / Reptó",esPart:"Arrastrado / Reptado"},
-  {base:"Cut",past:"Cut",participle:"Cut",esPres:"Cortar",esPast:"Cortó",esPart:"Cortado"},
-  {base:"Deal",past:"Dealt",participle:"Dealt",esPres:"Tratar / Repartir",esPast:"Trató / Repartió",esPart:"Tratado / Repartido"},
-  {base:"Dig",past:"Dug",participle:"Dug",esPres:"Cavar",esPast:"Cavó",esPart:"Cavado"},
-  {base:"Do",past:"Did",participle:"Done",esPres:"Hacer",esPast:"Hizo",esPart:"Hecho"},
-  {base:"Draw",past:"Drew",participle:"Drawn",esPres:"Dibujar / Jalar",esPast:"Dibujó / Jaló",esPart:"Dibujado / Jalado"},
-  {base:"Dream",past:"Dreamt / Dreamed",participle:"Dreamt / Dreamed",esPres:"Soñar",esPast:"Soñó",esPart:"Soñado"},
-  {base:"Drink",past:"Drank",participle:"Drunk",esPres:"Beber",esPast:"Bebió",esPart:"Bebido"},
-  {base:"Drive",past:"Drove",participle:"Driven",esPres:"Conducir / Manejar",esPast:"Condujo / Manejó",esPart:"Conducido / Manejado"},
-  {base:"Eat",past:"Ate",participle:"Eaten",esPres:"Comer",esPast:"Comió",esPart:"Comido"},
-  {base:"Fall",past:"Fell",participle:"Fallen",esPres:"Caer",esPast:"Cayó",esPart:"Caído"},
-  {base:"Feed",past:"Fed",participle:"Fed",esPres:"Alimentar",esPast:"Alimentó",esPart:"Alimentado"},
-  {base:"Feel",past:"Felt",participle:"Felt",esPres:"Sentir",esPast:"Sintió",esPart:"Sentido"},
-  {base:"Fight",past:"Fought",participle:"Fought",esPres:"Luchar / Pelear",esPast:"Luchó / Peleó",esPart:"Luchado / Peleado"},
-  {base:"Find",past:"Found",participle:"Found",esPres:"Encontrar",esPast:"Encontró",esPart:"Encontrado"},
-  {base:"Flee",past:"Fled",participle:"Fled",esPres:"Huir",esPast:"Huyó",esPart:"Huido"},
-  {base:"Fly",past:"Flew",participle:"Flown",esPres:"Volar",esPast:"Voló",esPart:"Volado"},
-  {base:"Forbid",past:"Forbade",participle:"Forbidden",esPres:"Prohibir",esPast:"Prohibió",esPart:"Prohibido"},
-  {base:"Forget",past:"Forgot",participle:"Forgotten",esPres:"Olvidar",esPast:"Olvidó",esPart:"Olvidado"},
-  {base:"Forgive",past:"Forgave",participle:"Forgiven",esPres:"Perdonar",esPast:"Perdonó",esPart:"Perdonado"},
-  {base:"Freeze",past:"Froze",participle:"Frozen",esPres:"Helar / Congelar",esPast:"Heló / Congeló",esPart:"Helado / Congelado"},
-  {base:"Get",past:"Got",participle:"Got / Gotten",esPres:"Obtener / Conseguir",esPast:"Obtuvo / Consiguió",esPart:"Obtenido / Conseguido"},
-  {base:"Give",past:"Gave",participle:"Given",esPres:"Dar",esPast:"Dio",esPart:"Dado"},
-  {base:"Go",past:"Went",participle:"Gone",esPres:"Ir",esPast:"Fue",esPart:"Ido"},
-  {base:"Grind",past:"Ground",participle:"Ground",esPres:"Moler",esPast:"Molió",esPart:"Molido"},
-  {base:"Grow",past:"Grew",participle:"Grown",esPres:"Crecer",esPast:"Creció",esPart:"Crecido"},
-  {base:"Hang",past:"Hung",participle:"Hung",esPres:"Colgar",esPast:"Colgó",esPart:"Colgado"},
-  {base:"Have",past:"Had",participle:"Had",esPres:"Haber / Tener",esPast:"Hubo / Tuvo",esPart:"Habido / Tenido"},
-  {base:"Hear",past:"Heard",participle:"Heard",esPres:"Oír",esPast:"Oyó",esPart:"Oído"},
-  {base:"Hide",past:"Hid",participle:"Hidden",esPres:"Ocultar / Esconder",esPast:"Ocultó / Escondió",esPart:"Ocultado / Escondido"},
-  {base:"Hit",past:"Hit",participle:"Hit",esPres:"Golpear",esPast:"Golpeó",esPart:"Golpeado"},
-  {base:"Hold",past:"Held",participle:"Held",esPres:"Agarrar / Sostener",esPast:"Agarró / Sostuvo",esPart:"Agarrado / Sostenido"},
-  {base:"Hurt",past:"Hurt",participle:"Hurt",esPres:"Herir / Doler",esPast:"Hirió / Dolió",esPart:"Herido / Dolido"},
-  {base:"Keep",past:"Kept",participle:"Kept",esPres:"Conservar / Guardar",esPast:"Conservó / Guardó",esPart:"Conservado / Guardado"},
-  {base:"Kneel",past:"Knelt",participle:"Knelt",esPres:"Arrodillarse",esPast:"Se arrodilló",esPart:"Arrodillado"},
-  {base:"Knit",past:"Knit",participle:"Knit",esPres:"Tejer / Hacer punto",esPast:"Tejió",esPart:"Tejido"},
-  {base:"Know",past:"Knew",participle:"Known",esPres:"Saber / Conocer",esPast:"Supo / Conoció",esPart:"Sabido / Conocido"},
-  {base:"Lay",past:"Laid",participle:"Laid",esPres:"Poner / Colocar",esPast:"Puso / Colocó",esPart:"Puesto / Colocado"},
-  {base:"Lead",past:"Led",participle:"Led",esPres:"Liderar / Conducir",esPast:"Lideró / Condujo",esPart:"Liderado / Conducido"},
-  {base:"Lean",past:"Leant",participle:"Leant",esPres:"Apoyarse / Inclinarse",esPast:"Se apoyó / Se inclinó",esPart:"Apoyado / Inclinado"},
-  {base:"Leap",past:"Leapt",participle:"Leapt",esPres:"Brincar / Saltar",esPast:"Brincó / Saltó",esPart:"Brincado / Saltado"},
-  {base:"Learn",past:"Learnt / Learned",participle:"Learnt / Learned",esPres:"Aprender",esPast:"Aprendió",esPart:"Aprendido"},
-  {base:"Leave",past:"Left",participle:"Left",esPres:"Dejar / Salir",esPast:"Dejó / Salió",esPart:"Dejado / Salido"},
-  {base:"Lend",past:"Lent",participle:"Lent",esPres:"Prestar",esPast:"Prestó",esPart:"Prestado"},
-  {base:"Let",past:"Let",participle:"Let",esPres:"Permitir / Dejar",esPast:"Permitió / Dejó",esPart:"Permitido / Dejado"},
-  {base:"Lie",past:"Lay",participle:"Lain",esPres:"Echarse / Acostarse",esPast:"Se echó / Se acostó",esPart:"Echado / Acostado"},
-  {base:"Light",past:"Lit",participle:"Lit",esPres:"Encender / Iluminar",esPast:"Encendió / Iluminó",esPart:"Encendido / Iluminado"},
-  {base:"Lose",past:"Lost",participle:"Lost",esPres:"Perder",esPast:"Perdió",esPart:"Perdido"},
-  {base:"Make",past:"Made",participle:"Made",esPres:"Hacer / Fabricar",esPast:"Hizo / Fabricó",esPart:"Hecho / Fabricado"},
-  {base:"Mean",past:"Meant",participle:"Meant",esPres:"Significar / Querer decir",esPast:"Significó / Quiso decir",esPart:"Significado"},
-  {base:"Meet",past:"Met",participle:"Met",esPres:"Encontrar / Conocer",esPast:"Encontró / Conoció",esPart:"Encontrado / Conocido"},
-  {base:"Mistake",past:"Mistook",participle:"Mistaken",esPres:"Equivocar / Confundir",esPast:"Equivocó / Confundió",esPart:"Equivocado / Confundido"},
-  {base:"Overcome",past:"Overcame",participle:"Overcome",esPres:"Vencer / Superar",esPast:"Venció / Superó",esPart:"Vencido / Superado"},
-  {base:"Pay",past:"Paid",participle:"Paid",esPres:"Pagar",esPast:"Pagó",esPart:"Pagado"},
-  {base:"Put",past:"Put",participle:"Put",esPres:"Poner / Colocar",esPast:"Puso / Colocó",esPart:"Puesto / Colocado"},
-  {base:"Read",past:"Read",participle:"Read",esPres:"Leer",esPast:"Leyó",esPart:"Leído"},
-  {base:"Ride",past:"Rode",participle:"Ridden",esPres:"Montar / Cabalgar",esPast:"Montó / Cabalgó",esPart:"Montado / Cabalgado"},
-  {base:"Ring",past:"Rang",participle:"Rung",esPres:"Llamar / Sonar",esPast:"Llamó / Sonó",esPart:"Llamado / Sonado"},
-  {base:"Rise",past:"Rose",participle:"Risen",esPres:"Levantarse / Subir",esPast:"Se levantó / Subió",esPart:"Levantado / Subido"},
-  {base:"Run",past:"Ran",participle:"Run",esPres:"Correr",esPast:"Corrió",esPart:"Corrido"},
-  {base:"Say",past:"Said",participle:"Said",esPres:"Decir",esPast:"Dijo",esPart:"Dicho"},
-  {base:"See",past:"Saw",participle:"Seen",esPres:"Ver",esPast:"Vio",esPart:"Visto"},
-  {base:"Seek",past:"Sought",participle:"Sought",esPres:"Buscar",esPast:"Buscó",esPart:"Buscado"},
-  {base:"Sell",past:"Sold",participle:"Sold",esPres:"Vender",esPast:"Vendió",esPart:"Vendido"},
-  {base:"Send",past:"Sent",participle:"Sent",esPres:"Enviar / Mandar",esPast:"Envió / Mandó",esPart:"Enviado / Mandado"},
-  {base:"Set",past:"Set",participle:"Set",esPres:"Poner(se) / Fijar",esPast:"Se puso / Fijó",esPart:"Puesto / Fijado"},
-  {base:"Sew",past:"Sewed",participle:"Sewed / Sewn",esPres:"Coser",esPast:"Cosió",esPart:"Cosido"},
-  {base:"Shake",past:"Shook",participle:"Shaken",esPres:"Sacudir / Agitar",esPast:"Sacudió / Agitó",esPart:"Sacudido / Agitado"},
-  {base:"Shear",past:"Shore",participle:"Shorn",esPres:"Esquilar / Cortar",esPast:"Esquiló / Cortó",esPart:"Esquilado / Cortado"},
-  {base:"Shine",past:"Shone",participle:"Shone",esPres:"Brillar / Lucir",esPast:"Brilló / Lució",esPart:"Brillado / Lucido"},
-  {base:"Shoot",past:"Shot",participle:"Shot",esPres:"Disparar",esPast:"Disparó",esPart:"Disparado"},
-  {base:"Show",past:"Showed",participle:"Shown",esPres:"Mostrar / Enseñar",esPast:"Mostró / Enseñó",esPart:"Mostrado / Enseñado"},
-  {base:"Shrink",past:"Shrank",participle:"Shrunk",esPres:"Encoger",esPast:"Encogió",esPart:"Encogido"},
-  {base:"Shut",past:"Shut",participle:"Shut",esPres:"Cerrar",esPast:"Cerró",esPart:"Cerrado"},
-  {base:"Sing",past:"Sang",participle:"Sung",esPres:"Cantar",esPast:"Cantó",esPart:"Cantado"},
-  {base:"Sink",past:"Sank",participle:"Sunk",esPres:"Hundir",esPast:"Hundió",esPart:"Hundido"},
-  {base:"Sit",past:"Sat",participle:"Sat",esPres:"Sentarse",esPast:"Se sentó",esPart:"Sentado"},
-  {base:"Sleep",past:"Slept",participle:"Slept",esPres:"Dormir",esPast:"Durmió",esPart:"Dormido"},
-  {base:"Slide",past:"Slid",participle:"Slid",esPres:"Resbalar / Deslizar",esPast:"Resbaló / Deslizó",esPart:"Resbalado / Deslizado"},
-  {base:"Smell",past:"Smelt",participle:"Smelt",esPres:"Oler",esPast:"Olió",esPart:"Olido"},
-  {base:"Sow",past:"Sowed",participle:"Sowed / Sown",esPres:"Sembrar",esPast:"Sembró",esPart:"Sembrado"},
-  {base:"Speak",past:"Spoke",participle:"Spoken",esPres:"Hablar",esPast:"Habló",esPart:"Hablado"},
-  {base:"Speed",past:"Sped",participle:"Sped",esPres:"Acelerar / Ir rápido",esPast:"Aceleró / Fue rápido",esPart:"Acelerado"},
-  {base:"Spell",past:"Spelt",participle:"Spelt",esPres:"Deletrear",esPast:"Deletreó",esPart:"Deletreado"},
-  {base:"Spend",past:"Spent",participle:"Spent",esPres:"Gastar / Pasar (tiempo)",esPast:"Gastó / Pasó",esPart:"Gastado / Pasado"},
-  {base:"Spill",past:"Spilt / Spilled",participle:"Spilt / Spilled",esPres:"Derramar",esPast:"Derramó",esPart:"Derramado"},
-  {base:"Spin",past:"Spun",participle:"Spun",esPres:"Hilar / Girar",esPast:"Hiló / Giró",esPart:"Hilado / Girado"},
-  {base:"Spit",past:"Spat",participle:"Spat",esPres:"Escupir",esPast:"Escupió",esPart:"Escupido"},
-  {base:"Split",past:"Split",participle:"Split",esPres:"Hender / Partir",esPast:"Hendió / Partió",esPart:"Hendido / Partido"},
-  {base:"Spoil",past:"Spoilt / Spoiled",participle:"Spoilt / Spoiled",esPres:"Estropear / Arruinar",esPast:"Estropeó / Arruinó",esPart:"Estropeado / Arruinado"},
-  {base:"Spread",past:"Spread",participle:"Spread",esPres:"Extender / Difundir",esPast:"Extendió / Difundió",esPart:"Extendido / Difundido"},
-  {base:"Spring",past:"Sprang",participle:"Sprung",esPres:"Saltar / Brotar",esPast:"Saltó / Brotó",esPart:"Saltado / Brotado"},
-  {base:"Stand",past:"Stood",participle:"Stood",esPres:"Estar de pie / Pararse",esPast:"Estuvo de pie / Se paró",esPart:"Estando de pie / Parado"},
-  {base:"Steal",past:"Stole",participle:"Stolen",esPres:"Robar",esPast:"Robó",esPart:"Robado"},
-  {base:"Stick",past:"Stuck",participle:"Stuck",esPres:"Pegar / Adherir",esPast:"Pegó / Adhirió",esPart:"Pegado / Adherido"},
-  {base:"Sting",past:"Stung",participle:"Stung",esPres:"Picar / Aguijonear",esPast:"Picó / Aguijoneó",esPart:"Picado / Aguijoneado"},
-  {base:"Stink",past:"Stank / Stunk",participle:"Stunk",esPres:"Apestar / Heder",esPast:"Apestó / Hedió",esPart:"Apestado / Hedido"},
-  {base:"Stride",past:"Strode",participle:"Stridden",esPres:"Dar zancadas",esPast:"Dio zancadas",esPart:"Dado zancadas"},
-  {base:"Strike",past:"Struck",participle:"Struck",esPres:"Golpear / Atacar",esPast:"Golpeó / Atacó",esPart:"Golpeado / Atacado"},
-  {base:"Swear",past:"Swore",participle:"Sworn",esPres:"Jurar / Maldecir",esPast:"Juró / Maldijo",esPart:"Jurado / Maldecido"},
-  {base:"Sweat",past:"Sweat",participle:"Sweat",esPres:"Sudar",esPast:"Sudó",esPart:"Sudado"},
-  {base:"Sweep",past:"Swept",participle:"Swept",esPres:"Barrer",esPast:"Barrió",esPart:"Barrido"},
-  {base:"Swell",past:"Swelled",participle:"Swollen",esPres:"Hinchar / Inflamar",esPast:"Hinchó / Inflamó",esPart:"Hinchado / Inflamado"},
-  {base:"Swim",past:"Swam",participle:"Swum",esPres:"Nadar",esPast:"Nadó",esPart:"Nadado"},
-  {base:"Swing",past:"Swung",participle:"Swung",esPres:"Columpiarse / Oscilar",esPast:"Se columpió / Osciló",esPart:"Columpiado / Oscilado"},
-  {base:"Take",past:"Took",participle:"Taken",esPres:"Tomar / Coger",esPast:"Tomó / Cogió",esPart:"Tomado / Cogido"},
-  {base:"Teach",past:"Taught",participle:"Taught",esPres:"Enseñar",esPast:"Enseñó",esPart:"Enseñado"},
-  {base:"Tear",past:"Tore",participle:"Torn",esPres:"Rasgar / Romper",esPast:"Rasgó / Rompió",esPart:"Rasgado / Roto"},
-  {base:"Tell",past:"Told",participle:"Told",esPres:"Decir / Contar",esPast:"Dijo / Contó",esPart:"Dicho / Contado"},
-  {base:"Think",past:"Thought",participle:"Thought",esPres:"Pensar",esPast:"Pensó",esPart:"Pensado"},
-  {base:"Throw",past:"Threw",participle:"Thrown",esPres:"Arrojar / Lanzar",esPast:"Arrojó / Lanzó",esPart:"Arrojado / Lanzado"},
-  {base:"Thrust",past:"Thrust",participle:"Thrust",esPres:"Introducir / Empujar",esPast:"Introdujo / Empujó",esPart:"Introducido / Empujado"},
-  {base:"Tread",past:"Trod",participle:"Trodden",esPres:"Pisar / Hollar",esPast:"Pisó / Holló",esPart:"Pisado / Hollado"},
-  {base:"Undergo",past:"Underwent",participle:"Undergone",esPres:"Sufrir / Someterse a",esPast:"Sufrió / Se sometió a",esPart:"Sufrido / Sometido"},
-  {base:"Understand",past:"Understood",participle:"Understood",esPres:"Entender / Comprender",esPast:"Entendió / Comprendió",esPart:"Entendido / Comprendido"},
-  {base:"Undertake",past:"Undertook",participle:"Undertaken",esPres:"Emprender / Comprometerse",esPast:"Emprendió / Se comprometió",esPart:"Emprendido / Comprometido"},
-  {base:"Wake",past:"Woke",participle:"Woken",esPres:"Despertar",esPast:"Despertó",esPart:"Despertado"},
-  {base:"Wear",past:"Wore",participle:"Worn",esPres:"Llevar puesto / Usar",esPast:"Llevó puesto / Usó",esPart:"Llevado puesto / Usado"},
-  {base:"Weave",past:"Wove",participle:"Woven",esPres:"Tejer",esPast:"Tejió",esPart:"Tejido"},
-  {base:"Weep",past:"Wept",participle:"Wept",esPres:"Llorar",esPast:"Lloró",esPart:"Llorado"},
-  {base:"Wet",past:"Wet",participle:"Wet",esPres:"Mojar / Humedecer",esPast:"Mojó / Humedeció",esPart:"Mojado / Humedecido"},
-  {base:"Win",past:"Won",participle:"Won",esPres:"Ganar",esPast:"Ganó",esPart:"Ganado"},
-  {base:"Wind",past:"Wound",participle:"Wound",esPres:"Enrollar / Bobinar",esPast:"Enrolló / Bobinó",esPart:"Enrollado / Bobinado"},
-  {base:"Withdraw",past:"Withdrew",participle:"Withdrawn",esPres:"Retirar(se)",esPast:"Se retiró / Retiró",esPart:"Retirado"},
-  {base:"Wring",past:"Wrung",participle:"Wrung",esPres:"Torcer / Retorcer",esPast:"Torció / Retorció",esPart:"Torcido / Retorcido"},
-  {base:"Write",past:"Wrote",participle:"Written",esPres:"Escribir",esPast:"Escribió",esPart:"Escrito"},
-  {base:"Abide",past:"Abode / Abided",participle:"Abode / Abided",esPres:"Tolerar / Soportar",esPast:"Toleró / Soportó",esPart:"Tolerado / Soportado"},
-  {base:"Befall",past:"Befell",participle:"Befallen",esPres:"Ocurrirle / Sucederle",esPast:"Le ocurrió / Le sucedió",esPart:"Ocurrido / Sucedido"},
-  {base:"Behold",past:"Beheld",participle:"Beheld",esPres:"Contemplar / Observar",esPast:"Contempló / Observó",esPart:"Contemplado / Observado"},
-  {base:"Beset",past:"Beset",participle:"Beset",esPres:"Asediar / Acosar",esPast:"Asedió / Acosó",esPart:"Asediado / Acosado"},
-  {base:"Clothe",past:"Clothed / Clad",participle:"Clothed / Clad",esPres:"Vestir / Cubrir",esPast:"Vistió / Cubrió",esPart:"Vestido / Cubierto"},
-  {base:"Dare",past:"Dared / Durst",participle:"Dared",esPres:"Atreverse / Osar",esPast:"Se atrevió / Osó",esPart:"Atrevido / Osado"},
-  {base:"Dive",past:"Dove / Dived",participle:"Dived",esPres:"Bucear / Zambullirse",esPast:"Buceó / Se zambulló",esPart:"Buceado / Zambullido"},
-  {base:"Dwell",past:"Dwelt / Dwelled",participle:"Dwelt / Dwelled",esPres:"Vivir / Residir / Morar",esPast:"Vivió / Residió / Moró",esPart:"Vivido / Residido / Morado"},
-  {base:"Fit",past:"Fit / Fitted",participle:"Fit / Fitted",esPres:"Caber / Ajustar / Quedar bien",esPast:"Cabió / Ajustó / Quedó bien",esPart:"Cabido / Ajustado"},
-  {base:"Fling",past:"Flung",participle:"Flung",esPres:"Arrojar / Lanzar con fuerza",esPast:"Arrojó / Lanzó",esPart:"Arrojado / Lanzado"},
-  {base:"Forbear",past:"Forbore",participle:"Forborne",esPres:"Abstenerse / Aguantar",esPast:"Se abstuvo / Aguantó",esPart:"Abstenido / Aguantado"},
-  {base:"Forego",past:"Forewent",participle:"Foregone",esPres:"Renunciar / Prescindir",esPast:"Renunció / Prescindió",esPart:"Renunciado / Prescindido"},
-  {base:"Foresee",past:"Foresaw",participle:"Foreseen",esPres:"Prever / Anticipar",esPast:"Previó / Anticipó",esPart:"Previsto / Anticipado"},
-  {base:"Forsake",past:"Forsook",participle:"Forsaken",esPres:"Abandonar / Renunciar",esPast:"Abandonó / Renunció",esPart:"Abandonado / Renunciado"},
-  {base:"Hamstring",past:"Hamstrung",participle:"Hamstrung",esPres:"Paralizar / Obstaculizar",esPast:"Paralizó / Obstaculizó",esPart:"Paralizado / Obstaculizado"},
-  {base:"Input",past:"Input / Inputted",participle:"Input / Inputted",esPres:"Introducir datos / Ingresar",esPast:"Introdujo datos / Ingresó",esPart:"Introducido / Ingresado"},
-  {base:"Inset",past:"Inset",participle:"Inset",esPres:"Insertar / Incrustar",esPast:"Insertó / Incrustó",esPart:"Insertado / Incrustado"},
-  {base:"Interweave",past:"Interwove",participle:"Interwoven",esPres:"Entrelazar / Combinar",esPast:"Entrelazó / Combinó",esPart:"Entrelazado / Combinado"},
-  {base:"Mislay",past:"Mislaid",participle:"Mislaid",esPres:"Extraviar / Perder",esPast:"Extravió / Perdió",esPart:"Extraviado / Perdido"},
-  {base:"Mislead",past:"Misled",participle:"Misled",esPres:"Engañar / Desorientar",esPast:"Engañó / Desorientó",esPart:"Engañado / Desorientado"},
-  {base:"Misread",past:"Misread",participle:"Misread",esPres:"Malinterpretar / Leer mal",esPast:"Malinterpretó / Leyó mal",esPart:"Malinterpretado"},
-  {base:"Offset",past:"Offset",participle:"Offset",esPres:"Compensar / Contrarrestar",esPast:"Compensó / Contrarrestó",esPart:"Compensado / Contrarrestado"},
-  {base:"Outdo",past:"Outdid",participle:"Outdone",esPres:"Superar / Aventajar",esPast:"Superó / Aventajó",esPart:"Superado / Aventajado"},
-  {base:"Outgrow",past:"Outgrew",participle:"Outgrown",esPres:"Crecer más que / Superar",esPast:"Creció más / Superó",esPart:"Crecido más / Superado"},
-  {base:"Outrun",past:"Outran",participle:"Outrun",esPres:"Correr más rápido / Superar",esPast:"Corrió más rápido / Superó",esPart:"Corrido más / Superado"},
-  {base:"Overdo",past:"Overdid",participle:"Overdone",esPres:"Exagerar / Hacer demasiado",esPast:"Exageró / Hizo demasiado",esPart:"Exagerado / Hecho demasiado"},
-  {base:"Overhear",past:"Overheard",participle:"Overheard",esPres:"Escuchar sin querer / Oír por casualidad",esPast:"Escuchó sin querer",esPart:"Escuchado sin querer"},
-  {base:"Overlap",past:"Overlapped",participle:"Overlapped",esPres:"Superponerse / Coincidir",esPast:"Se superpuso / Coincidió",esPart:"Superpuesto / Coincidido"},
-  {base:"Overrun",past:"Overran",participle:"Overrun",esPres:"Invadir / Desbordar",esPast:"Invadió / Desbordó",esPart:"Invadido / Desbordado"},
-  {base:"Oversee",past:"Oversaw",participle:"Overseen",esPres:"Supervisar / Vigilar",esPast:"Supervisó / Vigiló",esPart:"Supervisado / Vigilado"},
-  {base:"Overtake",past:"Overtook",participle:"Overtaken",esPres:"Adelantar / Superar",esPast:"Adelantó / Superó",esPart:"Adelantado / Superado"},
-  {base:"Overthrow",past:"Overthrew",participle:"Overthrown",esPres:"Derrocar / Derribar",esPast:"Derrocó / Derribó",esPart:"Derrocado / Derribado"},
-  {base:"Partake",past:"Partook",participle:"Partaken",esPres:"Participar / Tomar parte",esPast:"Participó / Tomó parte",esPart:"Participado"},
-  {base:"Prove",past:"Proved",participle:"Proved / Proven",esPres:"Probar / Demostrar",esPast:"Probó / Demostró",esPart:"Probado / Demostrado"},
-  {base:"Quit",past:"Quit / Quitted",participle:"Quit / Quitted",esPres:"Dejar / Renunciar / Salir",esPast:"Dejó / Renunció / Salió",esPart:"Dejado / Renunciado"},
-  {base:"Rebuild",past:"Rebuilt",participle:"Rebuilt",esPres:"Reconstruir",esPast:"Reconstruyó",esPart:"Reconstruido"},
-  {base:"Redo",past:"Redid",participle:"Redone",esPres:"Rehacer / Volver a hacer",esPast:"Rehízo / Volvió a hacer",esPart:"Rehecho"},
-  {base:"Remake",past:"Remade",participle:"Remade",esPres:"Rehacer / Volver a hacer",esPast:"Rehízo",esPart:"Rehecho"},
-  {base:"Reset",past:"Reset",participle:"Reset",esPres:"Restablecer / Reiniciar",esPast:"Restableció / Reinició",esPart:"Restablecido / Reiniciado"},
-  {base:"Rid",past:"Rid / Ridded",participle:"Rid / Ridded",esPres:"Deshacerse / Librarse",esPast:"Se deshizo / Se libró",esPart:"Deshecho / Librado"},
-  {base:"Saw",past:"Sawed",participle:"Sawed / Sawn",esPres:"Serrar / Aserrar",esPast:"Serró / Aserró",esPart:"Serrado / Aserrado"},
-  {base:"Shed",past:"Shed",participle:"Shed",esPres:"Desprender / Derramar / Mudar",esPast:"Desprendió / Derramó / Mudó",esPart:"Desprendido / Derramado / Mudado"},
-  {base:"Shred",past:"Shred / Shredded",participle:"Shred / Shredded",esPres:"Triturar / Desmenuzar",esPast:"Trituró / Desmenuzó",esPart:"Triturado / Desmenuzado"},
-  {base:"Slay",past:"Slew",participle:"Slain",esPres:"Matar / Asesinar",esPast:"Mató / Asesinó",esPart:"Matado / Asesinado"},
-  {base:"Sling",past:"Slung",participle:"Slung",esPres:"Lanzar / Colgar",esPast:"Lanzó / Colgó",esPart:"Lanzado / Colgado"},
-  {base:"Slink",past:"Slunk",participle:"Slunk",esPres:"Escabullirse / Moverse sigilosamente",esPast:"Se escabulló / Se movió sigilosamente",esPart:"Escabullido"},
-  {base:"Smite",past:"Smote",participle:"Smitten",esPres:"Golpear / Herir / Enamorar",esPast:"Golpeó / Hirió / Enamoró",esPart:"Golpeado / Herido / Enamorado"},
-  {base:"Sneak",past:"Sneaked / Snuck",participle:"Sneaked / Snuck",esPres:"Escabullirse / Colarse",esPast:"Se escabulló / Se coló",esPart:"Escabullido / Colado"},
-  {base:"Stave",past:"Staved / Stove",participle:"Staved / Stove",esPres:"Romper / Hundir / Prevenir",esPast:"Rompió / Hundió / Previno",esPart:"Roto / Hundido / Prevenido"},
-  {base:"Strew",past:"Strewed",participle:"Strewed / Strewn",esPres:"Esparcir / Diseminar",esPast:"Esparció / Diseminó",esPart:"Esparcido / Diseminado"},
-  {base:"String",past:"Strung",participle:"Strung",esPres:"Ensartar / Tensar / Colgar",esPast:"Ensartó / Tensó / Colgó",esPart:"Ensartado / Tensado / Colgado"},
-  {base:"Strive",past:"Strove / Strived",participle:"Striven / Strived",esPres:"Esforzarse / Luchar por",esPast:"Se esforzó / Luchó por",esPart:"Esforzado / Luchado"},
-  {base:"Sublet",past:"Sublet",participle:"Sublet",esPres:"Subarrendar / Subalquilar",esPast:"Subarrendó / Subalquiló",esPart:"Subarrendado / Subalquilado"},
-  {base:"Sunburn",past:"Sunburned / Sunburnt",participle:"Sunburned / Sunburnt",esPres:"Quemarse con el sol",esPast:"Se quemó con el sol",esPart:"Quemado con el sol"},
-  {base:"Thrive",past:"Throve / Thrived",participle:"Thriven / Thrived",esPres:"Prosperar / Florecer",esPast:"Prosperó / Floreció",esPart:"Prosperado / Florecido"},
-  {base:"Underlie",past:"Underlay",participle:"Underlain",esPres:"Subyacer / Estar debajo",esPast:"Subyació / Estuvo debajo",esPart:"Subyacido"},
-  {base:"Undermine",past:"Undermined",participle:"Undermined",esPres:"Socavar / Debilitar",esPast:"Socavó / Debilitó",esPart:"Socavado / Debilitado"},
-  {base:"Undo",past:"Undid",participle:"Undone",esPres:"Deshacer / Desatar",esPast:"Deshízo / Desató",esPart:"Deshecho / Desatado"},
-  {base:"Unwind",past:"Unwound",participle:"Unwound",esPres:"Desenrollar / Relajarse",esPast:"Desenrolló / Se relajó",esPart:"Desenrollado / Relajado"},
-  {base:"Uphold",past:"Upheld",participle:"Upheld",esPres:"Sostener / Defender / Apoyar",esPast:"Sostuvo / Defendió / Apoyó",esPart:"Sostenido / Defendido / Apoyado"},
-  {base:"Upset",past:"Upset",participle:"Upset",esPres:"Trastornar / Molestar / Volcar",esPast:"Trastornó / Molestó / Volcó",esPart:"Trastornado / Molestado / Volcado"},
-  {base:"Wed",past:"Wed / Wedded",participle:"Wed / Wedded",esPres:"Casarse / Desposar",esPast:"Se casó / Desposó",esPart:"Casado / Desposado"},
-  {base:"Withhold",past:"Withheld",participle:"Withheld",esPres:"Retener / Ocultar / Negar",esPast:"Retuvo / Ocultó / Negó",esPart:"Retenido / Ocultado / Negado"},
-  {base:"Withstand",past:"Withstood",participle:"Withstood",esPres:"Resistir / Aguantar",esPast:"Resistió / Aguantó",esPart:"Resistido / Aguantado"},
-];
+      // ─── /t/ ────────────────────────────────────────────────────
+      { base: "Ask", past: "Asked", participle: "Asked", esPres: "Preguntar / Pedir", esPast: "Preguntó / Pidió", esPart: "Preguntado / Pedido" },
+      { base: "Cook", past: "Cooked", participle: "Cooked", esPres: "Cocinar", esPast: "Cocinó", esPart: "Cocinado" },
+      { base: "Dance", past: "Danced", participle: "Danced", esPres: "Bailar", esPast: "Bailó", esPart: "Bailado" },
+      { base: "Dress", past: "Dressed", participle: "Dressed", esPres: "Vestir", esPast: "Vistió", esPart: "Vestido" },
+      { base: "Erase", past: "Erased", participle: "Erased", esPres: "Borrar", esPast: "Borró", esPart: "Borrado" },
+      { base: "Finish", past: "Finished", participle: "Finished", esPres: "Terminar / Acabar", esPast: "Terminó / Acabó", esPart: "Terminado / Acabado" },
+      { base: "Help", past: "Helped", participle: "Helped", esPres: "Ayudar", esPast: "Ayudó", esPart: "Ayudado" },
+      { base: "Jump", past: "Jumped", participle: "Jumped", esPres: "Brincar / Saltar", esPast: "Brincó / Saltó", esPart: "Brincado / Saltado" },
+      { base: "Like", past: "Liked", participle: "Liked", esPres: "Gustar / Agradar", esPast: "Gustó / Agradó", esPart: "Gustado / Agradado" },
+      { base: "Look", past: "Looked", participle: "Looked", esPres: "Mirar / Ver", esPast: "Miró / Vio", esPart: "Mirado / Visto" },
+      { base: "Miss", past: "Missed", participle: "Missed", esPres: "Extrañar / Perder", esPast: "Extrañó / Perdió", esPart: "Extrañado / Perdido" },
+      { base: "Practice", past: "Practiced", participle: "Practiced", esPres: "Practicar", esPast: "Practicó", esPart: "Practicado" },
+      { base: "Push", past: "Pushed", participle: "Pushed", esPres: "Empujar", esPast: "Empujó", esPart: "Empujado" },
+      { base: "Shop", past: "Shopped", participle: "Shopped", esPres: "Ir de compras", esPast: "Fue de compras", esPart: "Ido de compras" },
+      { base: "Smoke", past: "Smoked", participle: "Smoked", esPres: "Fumar", esPast: "Fumó", esPart: "Fumado" },
+      { base: "Stop", past: "Stopped", participle: "Stopped", esPres: "Detener / Parar", esPast: "Detuvo / Paró", esPart: "Detenido / Parado" },
+      { base: "Talk", past: "Talked", participle: "Talked", esPres: "Hablar / Platicar", esPast: "Habló / Platicó", esPart: "Hablado / Platicado" },
+      { base: "Use", past: "Used", participle: "Used", esPres: "Usar / Utilizar", esPast: "Usó / Utilizó", esPart: "Usado / Utilizado" },
+      { base: "Walk", past: "Walked", participle: "Walked", esPres: "Caminar / Andar", esPast: "Caminó / Anduvo", esPart: "Caminado / Andado" },
+      { base: "Wash", past: "Washed", participle: "Washed", esPres: "Lavar", esPast: "Lavó", esPart: "Lavado" },
+      { base: "Wish", past: "Wished", participle: "Wished", esPres: "Desear", esPast: "Deseó", esPart: "Deseado" },
+      { base: "Work", past: "Worked", participle: "Worked", esPres: "Trabajar", esPast: "Trabajó", esPart: "Trabajado" },
+      { base: "Accomplish", past: "Accomplished", participle: "Accomplished", esPres: "Lograr / Realizar", esPast: "Logró / Realizó", esPart: "Logrado / Realizado" },
+      { base: "Achieve", past: "Achieved", participle: "Achieved", esPres: "Lograr / Alcanzar", esPast: "Logró / Alcanzó", esPart: "Logrado / Alcanzado" },
+      { base: "Announce", past: "Announced", participle: "Announced", esPres: "Anunciar", esPast: "Anunció", esPart: "Anunciado" },
+      { base: "Approach", past: "Approached", participle: "Approached", esPres: "Acercarse / Aproximarse", esPast: "Se acercó / Se aproximó", esPart: "Acercado / Aproximado" },
+      { base: "Attach", past: "Attached", participle: "Attached", esPres: "Adjuntar / Sujetar", esPast: "Adjuntó / Sujetó", esPart: "Adjuntado / Sujetado" },
+      { base: "Bounce", past: "Bounced", participle: "Bounced", esPres: "Rebotar / Botar", esPast: "Rebotó / Botó", esPart: "Rebotado / Botado" },
+      { base: "Call", past: "Called", participle: "Called", esPres: "Llamar", esPast: "Llamó", esPart: "Llamado" },
+      { base: "Cause", past: "Caused", participle: "Caused", esPres: "Causar / Ocasionar", esPast: "Causó / Ocasionó", esPart: "Causado / Ocasionado" },
+      { base: "Chase", past: "Chased", participle: "Chased", esPres: "Perseguir", esPast: "Persiguió", esPart: "Perseguido" },
+      { base: "Check", past: "Checked", participle: "Checked", esPres: "Revisar / Verificar", esPast: "Revisó / Verificó", esPart: "Revisado / Verificado" },
+      { base: "Collapse", past: "Collapsed", participle: "Collapsed", esPres: "Colapsar / Derrumbarse", esPast: "Colapsó / Se derrumbó", esPart: "Colapsado / Derrumbado" },
+      { base: "Combine", past: "Combined", participle: "Combined", esPres: "Combinar", esPast: "Combinó", esPart: "Combinado" },
+      { base: "Complete", past: "Completed", participle: "Completed", esPres: "Completar", esPast: "Completó", esPart: "Completado" },
+      { base: "Convince", past: "Convinced", participle: "Convinced", esPres: "Convencer", esPast: "Convenció", esPart: "Convencido" },
+      { base: "Copy", past: "Copied", participle: "Copied", esPres: "Copiar", esPast: "Copió", esPart: "Copiado" },
+      { base: "Crash", past: "Crashed", participle: "Crashed", esPres: "Chocar / Estrellarse", esPast: "Chocó / Se estrelló", esPart: "Chocado / Estrellado" },
+      { base: "Decorate", past: "Decorated", participle: "Decorated", esPres: "Decorar", esPast: "Decoró", esPart: "Decorado" },
+      { base: "Describe", past: "Described", participle: "Described", esPres: "Describir", esPast: "Describió", esPart: "Descrito" },
+      { base: "Develop", past: "Developed", participle: "Developed", esPres: "Desarrollar", esPast: "Desarrolló", esPart: "Desarrollado" },
+      { base: "Discuss", past: "Discussed", participle: "Discussed", esPres: "Discutir / Hablar sobre", esPast: "Discutió / Habló sobre", esPart: "Discutido / Hablado" },
+      { base: "Divorce", past: "Divorced", participle: "Divorced", esPres: "Divorciarse", esPast: "Se divorció", esPart: "Divorciado" },
+      { base: "Encourage", past: "Encouraged", participle: "Encouraged", esPres: "Alentar / Animar", esPast: "Alentó / Animó", esPart: "Alentado / Animado" },
+      { base: "Enforce", past: "Enforced", participle: "Enforced", esPres: "Hacer cumplir / Aplicar", esPast: "Hizo cumplir / Aplicó", esPart: "Hecho cumplir / Aplicado" },
+      { base: "Exchange", past: "Exchanged", participle: "Exchanged", esPres: "Intercambiar / Cambiar", esPast: "Intercambió / Cambió", esPart: "Intercambiado / Cambiado" },
+      { base: "Exercise", past: "Exercised", participle: "Exercised", esPres: "Ejercitarse / Practicar", esPast: "Se ejercitó / Practicó", esPart: "Ejercitado / Practicado" },
+      { base: "Explore", past: "Explored", participle: "Explored", esPres: "Explorar", esPast: "Exploró", esPart: "Explorado" },
+      { base: "Force", past: "Forced", participle: "Forced", esPres: "Forzar / Obligar", esPast: "Forzó / Obligó", esPart: "Forzado / Obligado" },
+      { base: "Fix", past: "Fixed", participle: "Fixed", esPres: "Arreglar / Reparar", esPast: "Arregló / Reparó", esPart: "Arreglado / Reparado" },
+      { base: "Imagine", past: "Imagined", participle: "Imagined", esPres: "Imaginar", esPast: "Imaginó", esPart: "Imaginado" },
+      { base: "Increase", past: "Increased", participle: "Increased", esPres: "Aumentar / Incrementar", esPast: "Aumentó / Incrementó", esPart: "Aumentado / Incrementado" },
+      { base: "Introduce", past: "Introduced", participle: "Introduced", esPres: "Introducir / Presentar", esPast: "Introdujo / Presentó", esPart: "Introducido / Presentado" },
+      { base: "Invite", past: "Invited", participle: "Invited", esPres: "Invitar", esPast: "Invitó", esPart: "Invitado" },
+      { base: "Knock", past: "Knocked", participle: "Knocked", esPres: "Golpear / Tocar (puerta)", esPast: "Golpeó / Tocó", esPart: "Golpeado / Tocado" },
+      { base: "Launch", past: "Launched", participle: "Launched", esPres: "Lanzar", esPast: "Lanzó", esPart: "Lanzado" },
+      { base: "Manage", past: "Managed", participle: "Managed", esPres: "Manejar / Gestionar", esPast: "Manejó / Gestionó", esPart: "Manejado / Gestionado" },
+      { base: "Mix", past: "Mixed", participle: "Mixed", esPres: "Mezclar", esPast: "Mezcló", esPart: "Mezclado" },
+      { base: "Move", past: "Moved", participle: "Moved", esPres: "Mover / Mudarse", esPast: "Movió / Se mudó", esPart: "Movido / Mudado" },
+      { base: "Notice", past: "Noticed", participle: "Noticed", esPres: "Notar / Darse cuenta", esPast: "Notó / Se dio cuenta", esPart: "Notado" },
+      { base: "Organize", past: "Organized", participle: "Organized", esPres: "Organizar", esPast: "Organizó", esPart: "Organizado" },
+      { base: "Pause", past: "Paused", participle: "Paused", esPres: "Pausar / Detenerse", esPast: "Pausó / Se detuvo", esPart: "Pausado" },
+      { base: "Pick", past: "Picked", participle: "Picked", esPres: "Escoger / Recoger", esPast: "Escogió / Recogió", esPart: "Escogido / Recogido" },
+      { base: "Place", past: "Placed", participle: "Placed", esPres: "Colocar / Poner", esPast: "Colocó / Puso", esPart: "Colocado / Puesto" },
+      { base: "Prepare", past: "Prepared", participle: "Prepared", esPres: "Preparar", esPast: "Preparó", esPart: "Preparado" },
+      { base: "Produce", past: "Produced", participle: "Produced", esPres: "Producir", esPast: "Produjo", esPart: "Producido" },
+      { base: "Promise", past: "Promised", participle: "Promised", esPres: "Prometer", esPast: "Prometió", esPart: "Prometido" },
+      { base: "Receive", past: "Received", participle: "Received", esPres: "Recibir", esPast: "Recibió", esPart: "Recibido" },
+      { base: "Reduce", past: "Reduced", participle: "Reduced", esPres: "Reducir", esPast: "Redujo", esPart: "Reducido" },
+      { base: "Release", past: "Released", participle: "Released", esPres: "Liberar / Lanzar", esPast: "Liberó / Lanzó", esPart: "Liberado / Lanzado" },
+      { base: "Replace", past: "Replaced", participle: "Replaced", esPres: "Reemplazar", esPast: "Reemplazó", esPart: "Reemplazado" },
+      { base: "Rescue", past: "Rescued", participle: "Rescued", esPres: "Rescatar / Salvar", esPast: "Rescató / Salvó", esPart: "Rescatado / Salvado" },
+      { base: "Resolve", past: "Resolved", participle: "Resolved", esPres: "Resolver", esPast: "Resolvió", esPart: "Resuelto" },
+      { base: "Search", past: "Searched", participle: "Searched", esPres: "Buscar", esPast: "Buscó", esPart: "Buscado" },
+      { base: "Slice", past: "Sliced", participle: "Sliced", esPres: "Cortar en rebanadas", esPast: "Cortó en rebanadas", esPart: "Cortado en rebanadas" },
+      { base: "Touch", past: "Touched", participle: "Touched", esPres: "Tocar", esPast: "Tocó", esPart: "Tocado" },
+      { base: "Type", past: "Typed", participle: "Typed", esPres: "Escribir a máquina / Teclear", esPast: "Escribió / Tecleó", esPart: "Escrito / Tecleado" },
 
-const regularVerbs = [
-  // ─── /id/ ────────────────────────────────────────────────────
-  {base:"Accept",past:"Accepted",participle:"Accepted",esPres:"Aceptar",esPast:"Aceptó",esPart:"Aceptado"},
-  {base:"Count",past:"Counted",participle:"Counted",esPres:"Contar",esPast:"Contó",esPart:"Contado"},
-  {base:"Date",past:"Dated",participle:"Dated",esPres:"Citar / Fechar",esPast:"Citó / Fechó",esPart:"Citado / Fechado"},
-  {base:"End",past:"Ended",participle:"Ended",esPres:"Terminar / Finalizar",esPast:"Terminó / Finalizó",esPart:"Terminado / Finalizado"},
-  {base:"Expect",past:"Expected",participle:"Expected",esPres:"Esperar / Aguardar",esPast:"Esperó / Aguardó",esPart:"Esperado / Aguardado"},
-  {base:"Intend",past:"Intended",participle:"Intended",esPres:"Intentar / Tener la intención",esPast:"Intentó / Tuvo la intención",esPart:"Intentado"},
-  {base:"Need",past:"Needed",participle:"Needed",esPres:"Necesitar",esPast:"Necesitó",esPart:"Necesitado"},
-  {base:"Plant",past:"Planted",participle:"Planted",esPres:"Plantar",esPast:"Plantó",esPart:"Plantado"},
-  {base:"Point",past:"Pointed",participle:"Pointed",esPres:"Señalar / Apuntar",esPast:"Señaló / Apuntó",esPart:"Señalado / Apuntado"},
-  {base:"Rent",past:"Rented",participle:"Rented",esPres:"Rentar / Alquilar",esPast:"Rentó / Alquiló",esPart:"Rentado / Alquilado"},
-  {base:"Repeat",past:"Repeated",participle:"Repeated",esPres:"Repetir",esPast:"Repitió",esPart:"Repetido"},
-  {base:"Resist",past:"Resisted",participle:"Resisted",esPres:"Resistir",esPast:"Resistió",esPart:"Resistido"},
-  {base:"Start",past:"Started",participle:"Started",esPres:"Empezar / Comenzar",esPast:"Empezó / Comenzó",esPart:"Empezado / Comenzado"},
-  {base:"Visit",past:"Visited",participle:"Visited",esPres:"Visitar",esPast:"Visitó",esPart:"Visitado"},
-  {base:"Wait",past:"Waited",participle:"Waited",esPres:"Esperar / Aguardar",esPast:"Esperó / Aguardó",esPart:"Esperado / Aguardado"},
-  {base:"Want",past:"Wanted",participle:"Wanted",esPres:"Querer / Desear",esPast:"Quiso / Deseó",esPart:"Querido / Deseado"},
-  {base:"Adapt",past:"Adapted",participle:"Adapted",esPres:"Adaptar",esPast:"Adaptó",esPart:"Adaptado"},
-  {base:"Add",past:"Added",participle:"Added",esPres:"Agregar / Añadir",esPast:"Agregó / Añadió",esPart:"Agregado / Añadido"},
-  {base:"Admit",past:"Admitted",participle:"Admitted",esPres:"Admitir / Confesar",esPast:"Admitió / Confesó",esPart:"Admitido / Confesado"},
-  {base:"Affect",past:"Affected",participle:"Affected",esPres:"Afectar",esPast:"Afectó",esPart:"Afectado"},
-  {base:"Arrest",past:"Arrested",participle:"Arrested",esPres:"Arrestar / Detener",esPast:"Arrestó / Detuvo",esPart:"Arrestado / Detenido"},
-  {base:"Assist",past:"Assisted",participle:"Assisted",esPres:"Asistir / Ayudar",esPast:"Asistió / Ayudó",esPart:"Asistido / Ayudado"},
-  {base:"Attract",past:"Attracted",participle:"Attracted",esPres:"Atraer",esPast:"Atrajo",esPart:"Atraído"},
-  {base:"Avoid",past:"Avoided",participle:"Avoided",esPres:"Evitar",esPast:"Evitó",esPart:"Evitado"},
-  {base:"Benefit",past:"Benefited",participle:"Benefited",esPres:"Beneficiar",esPast:"Benefició",esPart:"Beneficiado"},
-  {base:"Collect",past:"Collected",participle:"Collected",esPres:"Coleccionar / Recoger",esPast:"Coleccionó / Recogió",esPart:"Coleccionado / Recogido"},
-  {base:"Comment",past:"Commented",participle:"Commented",esPres:"Comentar",esPast:"Comentó",esPart:"Comentado"},
-  {base:"Commit",past:"Committed",participle:"Committed",esPres:"Comprometerse / Cometer",esPast:"Se comprometió / Cometió",esPart:"Comprometido / Cometido"},
-  {base:"Compete",past:"Competed",participle:"Competed",esPres:"Competir",esPast:"Compitió",esPart:"Competido"},
-  {base:"Connect",past:"Connected",participle:"Connected",esPres:"Conectar",esPast:"Conectó",esPart:"Conectado"},
-  {base:"Contact",past:"Contacted",participle:"Contacted",esPres:"Contactar",esPast:"Contactó",esPart:"Contactado"},
-  {base:"Contain",past:"Contained",participle:"Contained",esPres:"Contener",esPast:"Contuvo",esPart:"Contenido"},
-  {base:"Credit",past:"Credited",participle:"Credited",esPres:"Acreditar",esPast:"Acreditó",esPart:"Acreditado"},
-  {base:"Correct",past:"Corrected",participle:"Corrected",esPres:"Corregir",esPast:"Corrigió",esPart:"Corregido"},
-  {base:"Defend",past:"Defended",participle:"Defended",esPres:"Defender",esPast:"Defendió",esPart:"Defendido"},
-  {base:"Deposit",past:"Deposited",participle:"Deposited",esPres:"Depositar",esPast:"Depositó",esPart:"Depositado"},
-  {base:"Detect",past:"Detected",participle:"Detected",esPres:"Detectar",esPast:"Detectó",esPart:"Detectado"},
-  {base:"Edit",past:"Edited",participle:"Edited",esPres:"Editar",esPast:"Editó",esPart:"Editado"},
-  {base:"Educate",past:"Educated",participle:"Educated",esPres:"Educar",esPast:"Educó",esPart:"Educado"},
-  {base:"Exist",past:"Existed",participle:"Existed",esPres:"Existir",esPast:"Existió",esPart:"Existido"},
-  {base:"Grant",past:"Granted",participle:"Granted",esPres:"Conceder / Otorgar",esPast:"Concedió / Otorgó",esPart:"Concedido / Otorgado"},
-  {base:"Greet",past:"Greeted",participle:"Greeted",esPres:"Saludar",esPast:"Saludó",esPart:"Saludado"},
-  {base:"Indicate",past:"Indicated",participle:"Indicated",esPres:"Indicar / Señalar",esPast:"Indicó / Señaló",esPart:"Indicado / Señalado"},
-  {base:"Insert",past:"Inserted",participle:"Inserted",esPres:"Insertar",esPast:"Insertó",esPart:"Insertado"},
-  {base:"Insist",past:"Insisted",participle:"Insisted",esPres:"Insistir",esPast:"Insistió",esPart:"Insistido"},
-  {base:"Invent",past:"Invented",participle:"Invented",esPres:"Inventar",esPast:"Inventó",esPart:"Inventado"},
-  {base:"Invest",past:"Invested",participle:"Invested",esPres:"Invertir",esPast:"Invirtió",esPart:"Invertido"},
-  {base:"Limit",past:"Limited",participle:"Limited",esPres:"Limitar",esPast:"Limitó",esPart:"Limitado"},
-  {base:"List",past:"Listed",participle:"Listed",esPres:"Listar / Enumerar",esPast:"Listó / Enumeró",esPart:"Listado / Enumerado"},
-  {base:"Melt",past:"Melted",participle:"Melted",esPres:"Derretir / Fundir",esPast:"Derritió / Fundió",esPart:"Derretido / Fundido"},
-  {base:"Permit",past:"Permitted",participle:"Permitted",esPres:"Permitir",esPast:"Permitió",esPart:"Permitido"},
-  {base:"Predict",past:"Predicted",participle:"Predicted",esPres:"Predecir",esPast:"Predijo",esPart:"Predicho"},
-  {base:"Prevent",past:"Prevented",participle:"Prevented",esPres:"Prevenir / Evitar",esPast:"Previno / Evitó",esPart:"Prevenido / Evitado"},
-  {base:"Print",past:"Printed",participle:"Printed",esPres:"Imprimir",esPast:"Imprimió",esPart:"Imprimido"},
-  {base:"Protect",past:"Protected",participle:"Protected",esPres:"Proteger",esPast:"Protegió",esPart:"Protegido"},
-  {base:"Recommend",past:"Recommended",participle:"Recommended",esPres:"Recomendar",esPast:"Recomendó",esPart:"Recomendado"},
-  {base:"Represent",past:"Represented",participle:"Represented",esPres:"Representar",esPast:"Representó",esPart:"Representado"},
-  {base:"Select",past:"Selected",participle:"Selected",esPres:"Seleccionar / Elegir",esPast:"Seleccionó / Eligió",esPart:"Seleccionado / Elegido"},
-  {base:"Suggest",past:"Suggested",participle:"Suggested",esPres:"Sugerir",esPast:"Sugirió",esPart:"Sugerido"},
-  {base:"Support",past:"Supported",participle:"Supported",esPres:"Apoyar / Sostener",esPast:"Apoyó / Sostuvo",esPart:"Apoyado / Sostenido"},
-  {base:"Test",past:"Tested",participle:"Tested",esPres:"Probar / Examinar",esPast:"Probó / Examinó",esPart:"Probado / Examinado"},
-  {base:"Treat",past:"Treated",participle:"Treated",esPres:"Tratar",esPast:"Trató",esPart:"Tratado"},
-  {base:"Trust",past:"Trusted",participle:"Trusted",esPres:"Confiar",esPast:"Confió",esPart:"Confiado"},
-  {base:"Update",past:"Updated",participle:"Updated",esPres:"Actualizar",esPast:"Actualizó",esPart:"Actualizado"},
-  {base:"Vote",past:"Voted",participle:"Voted",esPres:"Votar",esPast:"Votó",esPart:"Votado"},
+      // ─── /d/ ────────────────────────────────────────────────────
+      { base: "Answer", past: "Answered", participle: "Answered", esPres: "Responder / Contestar", esPast: "Respondió / Contestó", esPart: "Respondido / Contestado" },
+      { base: "Arrive", past: "Arrived", participle: "Arrived", esPres: "Llegar / Arribar", esPast: "Llegó / Arribó", esPart: "Llegado / Arribado" },
+      { base: "Belong", past: "Belonged", participle: "Belonged", esPres: "Pertenecer", esPast: "Perteneció", esPart: "Pertenecido" },
+      { base: "Change", past: "Changed", participle: "Changed", esPres: "Cambiar", esPast: "Cambió", esPart: "Cambiado" },
+      { base: "Clean", past: "Cleaned", participle: "Cleaned", esPres: "Limpiar", esPast: "Limpió", esPart: "Limpiado" },
+      { base: "Climb", past: "Climbed", participle: "Climbed", esPres: "Escalar / Trepar", esPast: "Escaló / Trepó", esPart: "Escalado / Trepado" },
+      { base: "Close", past: "Closed", participle: "Closed", esPres: "Cerrar", esPast: "Cerró", esPart: "Cerrado" },
+      { base: "Consider", past: "Considered", participle: "Considered", esPres: "Considerar", esPast: "Consideró", esPart: "Considerado" },
+      { base: "Deliver", past: "Delivered", participle: "Delivered", esPres: "Entregar", esPast: "Entregó", esPart: "Entregado" },
+      { base: "Enjoy", past: "Enjoyed", participle: "Enjoyed", esPres: "Disfrutar", esPast: "Disfrutó", esPart: "Disfrutado" },
+      { base: "Fill", past: "Filled", participle: "Filled", esPres: "Llenar", esPast: "Llenó", esPart: "Llenado" },
+      { base: "Follow", past: "Followed", participle: "Followed", esPres: "Seguir", esPast: "Siguió", esPart: "Seguido" },
+      { base: "Hurry", past: "Hurried", participle: "Hurried", esPres: "Apurar / Darse prisa", esPast: "Se apresuró / Se dio prisa", esPart: "Apurado / Dado prisa" },
+      { base: "Learn", past: "Learned", participle: "Learned", esPres: "Aprender", esPast: "Aprendió", esPart: "Aprendido" },
+      { base: "Listen", past: "Listened", participle: "Listened", esPres: "Escuchar", esPast: "Escuchó", esPart: "Escuchado" },
+      { base: "Live", past: "Lived", participle: "Lived", esPres: "Vivir", esPast: "Vivió", esPart: "Vivido" },
+      { base: "Love", past: "Loved", participle: "Loved", esPres: "Amar / Querer", esPast: "Amó / Quiso", esPart: "Amado / Querido" },
+      { base: "Name", past: "Named", participle: "Named", esPres: "Nombrar", esPast: "Nombró", esPart: "Nombrado" },
+      { base: "Open", past: "Opened", participle: "Opened", esPres: "Abrir", esPast: "Abrió", esPart: "Abierto" },
+      { base: "Order", past: "Ordered", participle: "Ordered", esPres: "Ordenar / Pedir", esPast: "Ordenó / Pidió", esPart: "Ordenado / Pedido" },
+      { base: "Plan", past: "Planned", participle: "Planned", esPres: "Planear / Planificar", esPast: "Planeó / Planificó", esPart: "Planeado / Planificado" },
+      { base: "Play", past: "Played", participle: "Played", esPres: "Jugar / Tocar", esPast: "Jugó / Tocó", esPart: "Jugado / Tocado" },
+      { base: "Rain", past: "Rained", participle: "Rained", esPres: "Llover", esPast: "Llovió", esPart: "Llovido" },
+      { base: "Remember", past: "Remembered", participle: "Remembered", esPres: "Recordar", esPast: "Recordó", esPart: "Recordado" },
+      { base: "Stay", past: "Stayed", participle: "Stayed", esPres: "Permanecer / Quedarse", esPast: "Permaneció / Se quedó", esPart: "Permanecido / Quedado" },
+      { base: "Study", past: "Studied", participle: "Studied", esPres: "Estudiar", esPast: "Estudió", esPart: "Estudiado" },
+      { base: "Travel", past: "Traveled", participle: "Traveled", esPres: "Viajar", esPast: "Viajó", esPart: "Viajado" },
+      { base: "Try", past: "Tried", participle: "Tried", esPres: "Intentar / Tratar", esPast: "Intentó / Trató", esPart: "Intentado / Tratado" },
+      { base: "Turn", past: "Turned", participle: "Turned", esPres: "Voltear / Girar", esPast: "Volteó / Giró", esPart: "Volteado / Girado" },
+      { base: "Allow", past: "Allowed", participle: "Allowed", esPres: "Permitir / Dejar", esPast: "Permitió / Dejó", esPart: "Permitido / Dejado" },
+      { base: "Apply", past: "Applied", participle: "Applied", esPres: "Aplicar / Solicitar", esPast: "Aplicó / Solicitó", esPart: "Aplicado / Solicitado" },
+      { base: "Believe", past: "Believed", participle: "Believed", esPres: "Creer", esPast: "Creyó", esPart: "Creído" },
+      { base: "Borrow", past: "Borrowed", participle: "Borrowed", esPres: "Pedir prestado", esPast: "Pidió prestado", esPart: "Pedido prestado" },
+      { base: "Care", past: "Cared", participle: "Cared", esPres: "Cuidar / Importar", esPast: "Cuidó / Importó", esPart: "Cuidado / Importado" },
+      { base: "Carry", past: "Carried", participle: "Carried", esPres: "Llevar / Cargar", esPast: "Llevó / Cargó", esPart: "Llevado / Cargado" },
+      { base: "Compare", past: "Compared", participle: "Compared", esPres: "Comparar", esPast: "Comparó", esPart: "Comparado" },
+      { base: "Continue", past: "Continued", participle: "Continued", esPres: "Continuar / Seguir", esPast: "Continuó / Siguió", esPart: "Continuado / Seguido" },
+      { base: "Cover", past: "Covered", participle: "Covered", esPres: "Cubrir / Tapar", esPast: "Cubrió / Tapó", esPart: "Cubierto / Tapado" },
+      { base: "Create", past: "Created", participle: "Created", esPres: "Crear", esPast: "Creó", esPart: "Creado" },
+      { base: "Decide", past: "Decided", participle: "Decided", esPres: "Decidir", esPast: "Decidió", esPart: "Decidido" },
+      { base: "Desire", past: "Desired", participle: "Desired", esPres: "Desear / Anhelar", esPast: "Deseó / Anheló", esPart: "Deseado / Anhelado" },
+      { base: "Divide", past: "Divided", participle: "Divided", esPres: "Dividir", esPast: "Dividió", esPart: "Dividido" },
+      { base: "Download", past: "Downloaded", participle: "Downloaded", esPres: "Descargar", esPast: "Descargó", esPart: "Descargado" },
+      { base: "Earn", past: "Earned", participle: "Earned", esPres: "Ganar / Ganarse", esPast: "Ganó / Se ganó", esPart: "Ganado" },
+      { base: "Enable", past: "Enabled", participle: "Enabled", esPres: "Habilitar / Permitir", esPast: "Habilitó / Permitió", esPart: "Habilitado / Permitido" },
+      { base: "Explain", past: "Explained", participle: "Explained", esPres: "Explicar", esPast: "Explicó", esPart: "Explicado" },
+      { base: "Fail", past: "Failed", participle: "Failed", esPres: "Fallar / Fracasar", esPast: "Falló / Fracasó", esPart: "Fallado / Fracasado" },
+      { base: "Form", past: "Formed", participle: "Formed", esPres: "Formar", esPast: "Formó", esPart: "Formado" },
+      { base: "Hire", past: "Hired", participle: "Hired", esPres: "Contratar / Alquilar", esPast: "Contrató / Alquiló", esPart: "Contratado / Alquilado" },
+      { base: "Improve", past: "Improved", participle: "Improved", esPres: "Mejorar", esPast: "Mejoró", esPart: "Mejorado" },
+      { base: "Include", past: "Included", participle: "Included", esPres: "Incluir", esPast: "Incluyó", esPart: "Incluido" },
+      { base: "Involve", past: "Involved", participle: "Involved", esPres: "Involucrar / Implicar", esPast: "Involucró / Implicó", esPart: "Involucrado / Implicado" },
+      { base: "Join", past: "Joined", participle: "Joined", esPres: "Unirse / Unir", esPast: "Se unió / Unió", esPart: "Unido" },
+      { base: "Kill", past: "Killed", participle: "Killed", esPres: "Matar", esPast: "Mató", esPart: "Matado" },
+      { base: "Maintain", past: "Maintained", participle: "Maintained", esPres: "Mantener", esPast: "Mantuvo", esPart: "Mantenido" },
+      { base: "Measure", past: "Measured", participle: "Measured", esPres: "Medir", esPast: "Midió", esPart: "Medido" },
+      { base: "Offer", past: "Offered", participle: "Offered", esPres: "Ofrecer", esPast: "Ofreció", esPart: "Ofrecido" },
+      { base: "Operate", past: "Operated", participle: "Operated", esPres: "Operar / Funcionar", esPast: "Operó / Funcionó", esPart: "Operado / Funcionado" },
+      { base: "Perform", past: "Performed", participle: "Performed", esPres: "Realizar / Actuar", esPast: "Realizó / Actuó", esPart: "Realizado / Actuado" },
+      { base: "Pull", past: "Pulled", participle: "Pulled", esPres: "Jalar / Tirar", esPast: "Jaló / Tiró", esPart: "Jalado / Tirado" },
+      { base: "Realize", past: "Realized", participle: "Realized", esPres: "Darse cuenta / Realizar", esPast: "Se dio cuenta / Realizó", esPart: "Dado cuenta / Realizado" },
+      { base: "Relate", past: "Related", participle: "Related", esPres: "Relacionar", esPast: "Relacionó", esPart: "Relacionado" },
+      { base: "Remain", past: "Remained", participle: "Remained", esPres: "Permanecer / Quedarse", esPast: "Permaneció / Se quedó", esPart: "Permanecido / Quedado" },
+      { base: "Require", past: "Required", participle: "Required", esPres: "Requerir / Necesitar", esPast: "Requirió / Necesitó", esPart: "Requerido / Necesitado" },
+      { base: "Respond", past: "Responded", participle: "Responded", esPres: "Responder", esPast: "Respondió", esPart: "Respondido" },
+      { base: "Return", past: "Returned", participle: "Returned", esPres: "Regresar / Devolver", esPast: "Regresó / Devolvió", esPart: "Regresado / Devuelto" },
+      { base: "Reveal", past: "Revealed", participle: "Revealed", esPres: "Revelar", esPast: "Reveló", esPart: "Revelado" },
+      { base: "Review", past: "Reviewed", participle: "Reviewed", esPres: "Revisar / Repasar", esPast: "Revisó / Repasó", esPart: "Revisado / Repasado" },
+      { base: "Save", past: "Saved", participle: "Saved", esPres: "Salvar / Guardar / Ahorrar", esPast: "Salvó / Guardó / Ahorró", esPart: "Salvado / Guardado / Ahorrado" },
+      { base: "Serve", past: "Served", participle: "Served", esPres: "Servir", esPast: "Sirvió", esPart: "Servido" },
+      { base: "Solve", past: "Solved", participle: "Solved", esPres: "Resolver / Solucionar", esPast: "Resolvió / Solucionó", esPart: "Resuelto / Solucionado" },
+      { base: "Supply", past: "Supplied", participle: "Supplied", esPres: "Suministrar / Proveer", esPast: "Suministró / Proveyó", esPart: "Suministrado / Proveído" },
+      { base: "Suppose", past: "Supposed", participle: "Supposed", esPres: "Suponer", esPast: "Supuso", esPart: "Supuesto" },
+      { base: "Survive", past: "Survived", participle: "Survived", esPres: "Sobrevivir", esPast: "Sobrevivió", esPart: "Sobrevivido" },
+      { base: "Upload", past: "Uploaded", participle: "Uploaded", esPres: "Subir / Cargar", esPast: "Subió / Cargó", esPart: "Subido / Cargado" },
+      { base: "Vary", past: "Varied", participle: "Varied", esPres: "Variar", esPast: "Varió", esPart: "Variado" },
+      { base: "Worry", past: "Worried", participle: "Worried", esPres: "Preocupar / Preocuparse", esPast: "Preocupó / Se preocupó", esPart: "Preocupado" },
+    ];
 
-  // ─── /t/ ────────────────────────────────────────────────────
-  {base:"Ask",past:"Asked",participle:"Asked",esPres:"Preguntar / Pedir",esPast:"Preguntó / Pidió",esPart:"Preguntado / Pedido"},
-  {base:"Cook",past:"Cooked",participle:"Cooked",esPres:"Cocinar",esPast:"Cocinó",esPart:"Cocinado"},
-  {base:"Dance",past:"Danced",participle:"Danced",esPres:"Bailar",esPast:"Bailó",esPart:"Bailado"},
-  {base:"Dress",past:"Dressed",participle:"Dressed",esPres:"Vestir",esPast:"Vistió",esPart:"Vestido"},
-  {base:"Erase",past:"Erased",participle:"Erased",esPres:"Borrar",esPast:"Borró",esPart:"Borrado"},
-  {base:"Finish",past:"Finished",participle:"Finished",esPres:"Terminar / Acabar",esPast:"Terminó / Acabó",esPart:"Terminado / Acabado"},
-  {base:"Help",past:"Helped",participle:"Helped",esPres:"Ayudar",esPast:"Ayudó",esPart:"Ayudado"},
-  {base:"Jump",past:"Jumped",participle:"Jumped",esPres:"Brincar / Saltar",esPast:"Brincó / Saltó",esPart:"Brincado / Saltado"},
-  {base:"Like",past:"Liked",participle:"Liked",esPres:"Gustar / Agradar",esPast:"Gustó / Agradó",esPart:"Gustado / Agradado"},
-  {base:"Look",past:"Looked",participle:"Looked",esPres:"Mirar / Ver",esPast:"Miró / Vio",esPart:"Mirado / Visto"},
-  {base:"Miss",past:"Missed",participle:"Missed",esPres:"Extrañar / Perder",esPast:"Extrañó / Perdió",esPart:"Extrañado / Perdido"},
-  {base:"Practice",past:"Practiced",participle:"Practiced",esPres:"Practicar",esPast:"Practicó",esPart:"Practicado"},
-  {base:"Push",past:"Pushed",participle:"Pushed",esPres:"Empujar",esPast:"Empujó",esPart:"Empujado"},
-  {base:"Shop",past:"Shopped",participle:"Shopped",esPres:"Ir de compras",esPast:"Fue de compras",esPart:"Ido de compras"},
-  {base:"Smoke",past:"Smoked",participle:"Smoked",esPres:"Fumar",esPast:"Fumó",esPart:"Fumado"},
-  {base:"Stop",past:"Stopped",participle:"Stopped",esPres:"Detener / Parar",esPast:"Detuvo / Paró",esPart:"Detenido / Parado"},
-  {base:"Talk",past:"Talked",participle:"Talked",esPres:"Hablar / Platicar",esPast:"Habló / Platicó",esPart:"Hablado / Platicado"},
-  {base:"Use",past:"Used",participle:"Used",esPres:"Usar / Utilizar",esPast:"Usó / Utilizó",esPart:"Usado / Utilizado"},
-  {base:"Walk",past:"Walked",participle:"Walked",esPres:"Caminar / Andar",esPast:"Caminó / Anduvo",esPart:"Caminado / Andado"},
-  {base:"Wash",past:"Washed",participle:"Washed",esPres:"Lavar",esPast:"Lavó",esPart:"Lavado"},
-  {base:"Wish",past:"Wished",participle:"Wished",esPres:"Desear",esPast:"Deseó",esPart:"Deseado"},
-  {base:"Work",past:"Worked",participle:"Worked",esPres:"Trabajar",esPast:"Trabajó",esPart:"Trabajado"},
-  {base:"Accomplish",past:"Accomplished",participle:"Accomplished",esPres:"Lograr / Realizar",esPast:"Logró / Realizó",esPart:"Logrado / Realizado"},
-  {base:"Achieve",past:"Achieved",participle:"Achieved",esPres:"Lograr / Alcanzar",esPast:"Logró / Alcanzó",esPart:"Logrado / Alcanzado"},
-  {base:"Announce",past:"Announced",participle:"Announced",esPres:"Anunciar",esPast:"Anunció",esPart:"Anunciado"},
-  {base:"Approach",past:"Approached",participle:"Approached",esPres:"Acercarse / Aproximarse",esPast:"Se acercó / Se aproximó",esPart:"Acercado / Aproximado"},
-  {base:"Attach",past:"Attached",participle:"Attached",esPres:"Adjuntar / Sujetar",esPast:"Adjuntó / Sujetó",esPart:"Adjuntado / Sujetado"},
-  {base:"Bounce",past:"Bounced",participle:"Bounced",esPres:"Rebotar / Botar",esPast:"Rebotó / Botó",esPart:"Rebotado / Botado"},
-  {base:"Call",past:"Called",participle:"Called",esPres:"Llamar",esPast:"Llamó",esPart:"Llamado"},
-  {base:"Cause",past:"Caused",participle:"Caused",esPres:"Causar / Ocasionar",esPast:"Causó / Ocasionó",esPart:"Causado / Ocasionado"},
-  {base:"Chase",past:"Chased",participle:"Chased",esPres:"Perseguir",esPast:"Persiguió",esPart:"Perseguido"},
-  {base:"Check",past:"Checked",participle:"Checked",esPres:"Revisar / Verificar",esPast:"Revisó / Verificó",esPart:"Revisado / Verificado"},
-  {base:"Collapse",past:"Collapsed",participle:"Collapsed",esPres:"Colapsar / Derrumbarse",esPast:"Colapsó / Se derrumbó",esPart:"Colapsado / Derrumbado"},
-  {base:"Combine",past:"Combined",participle:"Combined",esPres:"Combinar",esPast:"Combinó",esPart:"Combinado"},
-  {base:"Complete",past:"Completed",participle:"Completed",esPres:"Completar",esPast:"Completó",esPart:"Completado"},
-  {base:"Convince",past:"Convinced",participle:"Convinced",esPres:"Convencer",esPast:"Convenció",esPart:"Convencido"},
-  {base:"Copy",past:"Copied",participle:"Copied",esPres:"Copiar",esPast:"Copió",esPart:"Copiado"},
-  {base:"Crash",past:"Crashed",participle:"Crashed",esPres:"Chocar / Estrellarse",esPast:"Chocó / Se estrelló",esPart:"Chocado / Estrellado"},
-  {base:"Decorate",past:"Decorated",participle:"Decorated",esPres:"Decorar",esPast:"Decoró",esPart:"Decorado"},
-  {base:"Describe",past:"Described",participle:"Described",esPres:"Describir",esPast:"Describió",esPart:"Descrito"},
-  {base:"Develop",past:"Developed",participle:"Developed",esPres:"Desarrollar",esPast:"Desarrolló",esPart:"Desarrollado"},
-  {base:"Discuss",past:"Discussed",participle:"Discussed",esPres:"Discutir / Hablar sobre",esPast:"Discutió / Habló sobre",esPart:"Discutido / Hablado"},
-  {base:"Divorce",past:"Divorced",participle:"Divorced",esPres:"Divorciarse",esPast:"Se divorció",esPart:"Divorciado"},
-  {base:"Encourage",past:"Encouraged",participle:"Encouraged",esPres:"Alentar / Animar",esPast:"Alentó / Animó",esPart:"Alentado / Animado"},
-  {base:"Enforce",past:"Enforced",participle:"Enforced",esPres:"Hacer cumplir / Aplicar",esPast:"Hizo cumplir / Aplicó",esPart:"Hecho cumplir / Aplicado"},
-  {base:"Exchange",past:"Exchanged",participle:"Exchanged",esPres:"Intercambiar / Cambiar",esPast:"Intercambió / Cambió",esPart:"Intercambiado / Cambiado"},
-  {base:"Exercise",past:"Exercised",participle:"Exercised",esPres:"Ejercitarse / Practicar",esPast:"Se ejercitó / Practicó",esPart:"Ejercitado / Practicado"},
-  {base:"Explore",past:"Explored",participle:"Explored",esPres:"Explorar",esPast:"Exploró",esPart:"Explorado"},
-  {base:"Force",past:"Forced",participle:"Forced",esPres:"Forzar / Obligar",esPast:"Forzó / Obligó",esPart:"Forzado / Obligado"},
-  {base:"Fix",past:"Fixed",participle:"Fixed",esPres:"Arreglar / Reparar",esPast:"Arregló / Reparó",esPart:"Arreglado / Reparado"},
-  {base:"Imagine",past:"Imagined",participle:"Imagined",esPres:"Imaginar",esPast:"Imaginó",esPart:"Imaginado"},
-  {base:"Increase",past:"Increased",participle:"Increased",esPres:"Aumentar / Incrementar",esPast:"Aumentó / Incrementó",esPart:"Aumentado / Incrementado"},
-  {base:"Introduce",past:"Introduced",participle:"Introduced",esPres:"Introducir / Presentar",esPast:"Introdujo / Presentó",esPart:"Introducido / Presentado"},
-  {base:"Invite",past:"Invited",participle:"Invited",esPres:"Invitar",esPast:"Invitó",esPart:"Invitado"},
-  {base:"Knock",past:"Knocked",participle:"Knocked",esPres:"Golpear / Tocar (puerta)",esPast:"Golpeó / Tocó",esPart:"Golpeado / Tocado"},
-  {base:"Launch",past:"Launched",participle:"Launched",esPres:"Lanzar",esPast:"Lanzó",esPart:"Lanzado"},
-  {base:"Manage",past:"Managed",participle:"Managed",esPres:"Manejar / Gestionar",esPast:"Manejó / Gestionó",esPart:"Manejado / Gestionado"},
-  {base:"Mix",past:"Mixed",participle:"Mixed",esPres:"Mezclar",esPast:"Mezcló",esPart:"Mezclado"},
-  {base:"Move",past:"Moved",participle:"Moved",esPres:"Mover / Mudarse",esPast:"Movió / Se mudó",esPart:"Movido / Mudado"},
-  {base:"Notice",past:"Noticed",participle:"Noticed",esPres:"Notar / Darse cuenta",esPast:"Notó / Se dio cuenta",esPart:"Notado"},
-  {base:"Organize",past:"Organized",participle:"Organized",esPres:"Organizar",esPast:"Organizó",esPart:"Organizado"},
-  {base:"Pause",past:"Paused",participle:"Paused",esPres:"Pausar / Detenerse",esPast:"Pausó / Se detuvo",esPart:"Pausado"},
-  {base:"Pick",past:"Picked",participle:"Picked",esPres:"Escoger / Recoger",esPast:"Escogió / Recogió",esPart:"Escogido / Recogido"},
-  {base:"Place",past:"Placed",participle:"Placed",esPres:"Colocar / Poner",esPast:"Colocó / Puso",esPart:"Colocado / Puesto"},
-  {base:"Prepare",past:"Prepared",participle:"Prepared",esPres:"Preparar",esPast:"Preparó",esPart:"Preparado"},
-  {base:"Produce",past:"Produced",participle:"Produced",esPres:"Producir",esPast:"Produjo",esPart:"Producido"},
-  {base:"Promise",past:"Promised",participle:"Promised",esPres:"Prometer",esPast:"Prometió",esPart:"Prometido"},
-  {base:"Receive",past:"Received",participle:"Received",esPres:"Recibir",esPast:"Recibió",esPart:"Recibido"},
-  {base:"Reduce",past:"Reduced",participle:"Reduced",esPres:"Reducir",esPast:"Redujo",esPart:"Reducido"},
-  {base:"Release",past:"Released",participle:"Released",esPres:"Liberar / Lanzar",esPast:"Liberó / Lanzó",esPart:"Liberado / Lanzado"},
-  {base:"Replace",past:"Replaced",participle:"Replaced",esPres:"Reemplazar",esPast:"Reemplazó",esPart:"Reemplazado"},
-  {base:"Rescue",past:"Rescued",participle:"Rescued",esPres:"Rescatar / Salvar",esPast:"Rescató / Salvó",esPart:"Rescatado / Salvado"},
-  {base:"Resolve",past:"Resolved",participle:"Resolved",esPres:"Resolver",esPast:"Resolvió",esPart:"Resuelto"},
-  {base:"Search",past:"Searched",participle:"Searched",esPres:"Buscar",esPast:"Buscó",esPart:"Buscado"},
-  {base:"Slice",past:"Sliced",participle:"Sliced",esPres:"Cortar en rebanadas",esPast:"Cortó en rebanadas",esPart:"Cortado en rebanadas"},
-  {base:"Touch",past:"Touched",participle:"Touched",esPres:"Tocar",esPast:"Tocó",esPart:"Tocado"},
-  {base:"Type",past:"Typed",participle:"Typed",esPres:"Escribir a máquina / Teclear",esPast:"Escribió / Tecleó",esPart:"Escrito / Tecleado"},
+    const allVerbs = [
+      ...irregularVerbs.map(v => ({ ...v, type: 'IRREGULAR' })),
+      ...regularVerbs.map(v => ({ ...v, type: 'REGULAR' }))
+    ];
 
-  // ─── /d/ ────────────────────────────────────────────────────
-  {base:"Answer",past:"Answered",participle:"Answered",esPres:"Responder / Contestar",esPast:"Respondió / Contestó",esPart:"Respondido / Contestado"},
-  {base:"Arrive",past:"Arrived",participle:"Arrived",esPres:"Llegar / Arribar",esPast:"Llegó / Arribó",esPart:"Llegado / Arribado"},
-  {base:"Belong",past:"Belonged",participle:"Belonged",esPres:"Pertenecer",esPast:"Perteneció",esPart:"Pertenecido"},
-  {base:"Change",past:"Changed",participle:"Changed",esPres:"Cambiar",esPast:"Cambió",esPart:"Cambiado"},
-  {base:"Clean",past:"Cleaned",participle:"Cleaned",esPres:"Limpiar",esPast:"Limpió",esPart:"Limpiado"},
-  {base:"Climb",past:"Climbed",participle:"Climbed",esPres:"Escalar / Trepar",esPast:"Escaló / Trepó",esPart:"Escalado / Trepado"},
-  {base:"Close",past:"Closed",participle:"Closed",esPres:"Cerrar",esPast:"Cerró",esPart:"Cerrado"},
-  {base:"Consider",past:"Considered",participle:"Considered",esPres:"Considerar",esPast:"Consideró",esPart:"Considerado"},
-  {base:"Deliver",past:"Delivered",participle:"Delivered",esPres:"Entregar",esPast:"Entregó",esPart:"Entregado"},
-  {base:"Enjoy",past:"Enjoyed",participle:"Enjoyed",esPres:"Disfrutar",esPast:"Disfrutó",esPart:"Disfrutado"},
-  {base:"Fill",past:"Filled",participle:"Filled",esPres:"Llenar",esPast:"Llenó",esPart:"Llenado"},
-  {base:"Follow",past:"Followed",participle:"Followed",esPres:"Seguir",esPast:"Siguió",esPart:"Seguido"},
-  {base:"Hurry",past:"Hurried",participle:"Hurried",esPres:"Apurar / Darse prisa",esPast:"Se apresuró / Se dio prisa",esPart:"Apurado / Dado prisa"},
-  {base:"Learn",past:"Learned",participle:"Learned",esPres:"Aprender",esPast:"Aprendió",esPart:"Aprendido"},
-  {base:"Listen",past:"Listened",participle:"Listened",esPres:"Escuchar",esPast:"Escuchó",esPart:"Escuchado"},
-  {base:"Live",past:"Lived",participle:"Lived",esPres:"Vivir",esPast:"Vivió",esPart:"Vivido"},
-  {base:"Love",past:"Loved",participle:"Loved",esPres:"Amar / Querer",esPast:"Amó / Quiso",esPart:"Amado / Querido"},
-  {base:"Name",past:"Named",participle:"Named",esPres:"Nombrar",esPast:"Nombró",esPart:"Nombrado"},
-  {base:"Open",past:"Opened",participle:"Opened",esPres:"Abrir",esPast:"Abrió",esPart:"Abierto"},
-  {base:"Order",past:"Ordered",participle:"Ordered",esPres:"Ordenar / Pedir",esPast:"Ordenó / Pidió",esPart:"Ordenado / Pedido"},
-  {base:"Plan",past:"Planned",participle:"Planned",esPres:"Planear / Planificar",esPast:"Planeó / Planificó",esPart:"Planeado / Planificado"},
-  {base:"Play",past:"Played",participle:"Played",esPres:"Jugar / Tocar",esPast:"Jugó / Tocó",esPart:"Jugado / Tocado"},
-  {base:"Rain",past:"Rained",participle:"Rained",esPres:"Llover",esPast:"Llovió",esPart:"Llovido"},
-  {base:"Remember",past:"Remembered",participle:"Remembered",esPres:"Recordar",esPast:"Recordó",esPart:"Recordado"},
-  {base:"Stay",past:"Stayed",participle:"Stayed",esPres:"Permanecer / Quedarse",esPast:"Permaneció / Se quedó",esPart:"Permanecido / Quedado"},
-  {base:"Study",past:"Studied",participle:"Studied",esPres:"Estudiar",esPast:"Estudió",esPart:"Estudiado"},
-  {base:"Travel",past:"Traveled",participle:"Traveled",esPres:"Viajar",esPast:"Viajó",esPart:"Viajado"},
-  {base:"Try",past:"Tried",participle:"Tried",esPres:"Intentar / Tratar",esPast:"Intentó / Trató",esPart:"Intentado / Tratado"},
-  {base:"Turn",past:"Turned",participle:"Turned",esPres:"Voltear / Girar",esPast:"Volteó / Giró",esPart:"Volteado / Girado"},
-  {base:"Allow",past:"Allowed",participle:"Allowed",esPres:"Permitir / Dejar",esPast:"Permitió / Dejó",esPart:"Permitido / Dejado"},
-  {base:"Apply",past:"Applied",participle:"Applied",esPres:"Aplicar / Solicitar",esPast:"Aplicó / Solicitó",esPart:"Aplicado / Solicitado"},
-  {base:"Believe",past:"Believed",participle:"Believed",esPres:"Creer",esPast:"Creyó",esPart:"Creído"},
-  {base:"Borrow",past:"Borrowed",participle:"Borrowed",esPres:"Pedir prestado",esPast:"Pidió prestado",esPart:"Pedido prestado"},
-  {base:"Care",past:"Cared",participle:"Cared",esPres:"Cuidar / Importar",esPast:"Cuidó / Importó",esPart:"Cuidado / Importado"},
-  {base:"Carry",past:"Carried",participle:"Carried",esPres:"Llevar / Cargar",esPast:"Llevó / Cargó",esPart:"Llevado / Cargado"},
-  {base:"Compare",past:"Compared",participle:"Compared",esPres:"Comparar",esPast:"Comparó",esPart:"Comparado"},
-  {base:"Continue",past:"Continued",participle:"Continued",esPres:"Continuar / Seguir",esPast:"Continuó / Siguió",esPart:"Continuado / Seguido"},
-  {base:"Cover",past:"Covered",participle:"Covered",esPres:"Cubrir / Tapar",esPast:"Cubrió / Tapó",esPart:"Cubierto / Tapado"},
-  {base:"Create",past:"Created",participle:"Created",esPres:"Crear",esPast:"Creó",esPart:"Creado"},
-  {base:"Decide",past:"Decided",participle:"Decided",esPres:"Decidir",esPast:"Decidió",esPart:"Decidido"},
-  {base:"Desire",past:"Desired",participle:"Desired",esPres:"Desear / Anhelar",esPast:"Deseó / Anheló",esPart:"Deseado / Anhelado"},
-  {base:"Divide",past:"Divided",participle:"Divided",esPres:"Dividir",esPast:"Dividió",esPart:"Dividido"},
-  {base:"Download",past:"Downloaded",participle:"Downloaded",esPres:"Descargar",esPast:"Descargó",esPart:"Descargado"},
-  {base:"Earn",past:"Earned",participle:"Earned",esPres:"Ganar / Ganarse",esPast:"Ganó / Se ganó",esPart:"Ganado"},
-  {base:"Enable",past:"Enabled",participle:"Enabled",esPres:"Habilitar / Permitir",esPast:"Habilitó / Permitió",esPart:"Habilitado / Permitido"},
-  {base:"Explain",past:"Explained",participle:"Explained",esPres:"Explicar",esPast:"Explicó",esPart:"Explicado"},
-  {base:"Fail",past:"Failed",participle:"Failed",esPres:"Fallar / Fracasar",esPast:"Falló / Fracasó",esPart:"Fallado / Fracasado"},
-  {base:"Form",past:"Formed",participle:"Formed",esPres:"Formar",esPast:"Formó",esPart:"Formado"},
-  {base:"Hire",past:"Hired",participle:"Hired",esPres:"Contratar / Alquilar",esPast:"Contrató / Alquiló",esPart:"Contratado / Alquilado"},
-  {base:"Improve",past:"Improved",participle:"Improved",esPres:"Mejorar",esPast:"Mejoró",esPart:"Mejorado"},
-  {base:"Include",past:"Included",participle:"Included",esPres:"Incluir",esPast:"Incluyó",esPart:"Incluido"},
-  {base:"Involve",past:"Involved",participle:"Involved",esPres:"Involucrar / Implicar",esPast:"Involucró / Implicó",esPart:"Involucrado / Implicado"},
-  {base:"Join",past:"Joined",participle:"Joined",esPres:"Unirse / Unir",esPast:"Se unió / Unió",esPart:"Unido"},
-  {base:"Kill",past:"Killed",participle:"Killed",esPres:"Matar",esPast:"Mató",esPart:"Matado"},
-  {base:"Maintain",past:"Maintained",participle:"Maintained",esPres:"Mantener",esPast:"Mantuvo",esPart:"Mantenido"},
-  {base:"Measure",past:"Measured",participle:"Measured",esPres:"Medir",esPast:"Midió",esPart:"Medido"},
-  {base:"Offer",past:"Offered",participle:"Offered",esPres:"Ofrecer",esPast:"Ofreció",esPart:"Ofrecido"},
-  {base:"Operate",past:"Operated",participle:"Operated",esPres:"Operar / Funcionar",esPast:"Operó / Funcionó",esPart:"Operado / Funcionado"},
-  {base:"Perform",past:"Performed",participle:"Performed",esPres:"Realizar / Actuar",esPast:"Realizó / Actuó",esPart:"Realizado / Actuado"},
-  {base:"Pull",past:"Pulled",participle:"Pulled",esPres:"Jalar / Tirar",esPast:"Jaló / Tiró",esPart:"Jalado / Tirado"},
-  {base:"Realize",past:"Realized",participle:"Realized",esPres:"Darse cuenta / Realizar",esPast:"Se dio cuenta / Realizó",esPart:"Dado cuenta / Realizado"},
-  {base:"Relate",past:"Related",participle:"Related",esPres:"Relacionar",esPast:"Relacionó",esPart:"Relacionado"},
-  {base:"Remain",past:"Remained",participle:"Remained",esPres:"Permanecer / Quedarse",esPast:"Permaneció / Se quedó",esPart:"Permanecido / Quedado"},
-  {base:"Require",past:"Required",participle:"Required",esPres:"Requerir / Necesitar",esPast:"Requirió / Necesitó",esPart:"Requerido / Necesitado"},
-  {base:"Respond",past:"Responded",participle:"Responded",esPres:"Responder",esPast:"Respondió",esPart:"Respondido"},
-  {base:"Return",past:"Returned",participle:"Returned",esPres:"Regresar / Devolver",esPast:"Regresó / Devolvió",esPart:"Regresado / Devuelto"},
-  {base:"Reveal",past:"Revealed",participle:"Revealed",esPres:"Revelar",esPast:"Reveló",esPart:"Revelado"},
-  {base:"Review",past:"Reviewed",participle:"Reviewed",esPres:"Revisar / Repasar",esPast:"Revisó / Repasó",esPart:"Revisado / Repasado"},
-  {base:"Save",past:"Saved",participle:"Saved",esPres:"Salvar / Guardar / Ahorrar",esPast:"Salvó / Guardó / Ahorró",esPart:"Salvado / Guardado / Ahorrado"},
-  {base:"Serve",past:"Served",participle:"Served",esPres:"Servir",esPast:"Sirvió",esPart:"Servido"},
-  {base:"Solve",past:"Solved",participle:"Solved",esPres:"Resolver / Solucionar",esPast:"Resolvió / Solucionó",esPart:"Resuelto / Solucionado"},
-  {base:"Supply",past:"Supplied",participle:"Supplied",esPres:"Suministrar / Proveer",esPast:"Suministró / Proveyó",esPart:"Suministrado / Proveído"},
-  {base:"Suppose",past:"Supposed",participle:"Supposed",esPres:"Suponer",esPast:"Supuso",esPart:"Supuesto"},
-  {base:"Survive",past:"Survived",participle:"Survived",esPres:"Sobrevivir",esPast:"Sobrevivió",esPart:"Sobrevivido"},
-  {base:"Upload",past:"Uploaded",participle:"Uploaded",esPres:"Subir / Cargar",esPast:"Subió / Cargó",esPart:"Subido / Cargado"},
-  {base:"Vary",past:"Varied",participle:"Varied",esPres:"Variar",esPast:"Varió",esPart:"Variado"},
-  {base:"Worry",past:"Worried",participle:"Worried",esPres:"Preocupar / Preocuparse",esPast:"Preocupó / Se preocupó",esPart:"Preocupado"},
-];
+    let mode = 'past', questions = [], current = 0, score = 0, correct = 0, wrong = 0, streak = 0, bestStreak = 0, answered = false;
+    const TOTAL = 30;
 
-const allVerbs=[
-  ...irregularVerbs.map(v=>({...v,type:'IRREGULAR'})),
-  ...regularVerbs.map(v=>({...v,type:'REGULAR'}))
-];
+    function selectMode(el, m) { document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); mode = m; }
+    function shuffle(a) { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[r[i], r[j]] = [r[j], r[i]]; } return r; }
+    function getWrongOptions(ans, field, count = 3) { const pool = shuffle(allVerbs).filter(v => v[field] !== ans); const u = [], s = new Set([ans]); for (const v of pool) { if (!s.has(v[field])) { s.add(v[field]); u.push(v[field]); if (u.length === count) break; } } return u; }
 
-let mode='past',questions=[],current=0,score=0,correct=0,wrong=0,streak=0,bestStreak=0,answered=false;
-const TOTAL=30;
+    function buildQuestion(verb, forceMode) {
+      const m = forceMode || mode;
+      if (m === 'past') return { verb, text: "What is the <em>Simple Past</em> of:", highlight: verb.base, hint: "Infinitive → Simple Past", answer: verb.past, field: 'past', badge: verb.type };
+      if (m === 'participle') return { verb, text: "What is the <em>Past Participle</em> of:", highlight: verb.base, hint: "Infinitive → Past Participle", answer: verb.participle, field: 'participle', badge: verb.type };
+      return { verb, text: "Translate to Spanish:", highlight: verb.base, hint: "English → Español", answer: verb.esPres, field: 'esPres', badge: verb.type };
+    }
 
-function selectMode(el,m){document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('selected'));el.classList.add('selected');mode=m;}
-function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
-function getWrongOptions(ans,field,count=3){const pool=shuffle(allVerbs).filter(v=>v[field]!==ans);const u=[],s=new Set([ans]);for(const v of pool){if(!s.has(v[field])){s.add(v[field]);u.push(v[field]);if(u.length===count)break;}}return u;}
+    function generateQuestions() {
+      const verbs = shuffle(allVerbs).slice(0, TOTAL);
+      return verbs.map(v => { if (mode === 'mixed') { const m = ['past', 'participle', 'esPres']; return buildQuestion(v, m[Math.floor(Math.random() * 3)]); } return buildQuestion(v); });
+    }
 
-function buildQuestion(verb,forceMode){
-  const m=forceMode||mode;
-  if(m==='past') return{verb,text:"What is the <em>Simple Past</em> of:",highlight:verb.base,hint:"Infinitive → Simple Past",answer:verb.past,field:'past',badge:verb.type};
-  if(m==='participle') return{verb,text:"What is the <em>Past Participle</em> of:",highlight:verb.base,hint:"Infinitive → Past Participle",answer:verb.participle,field:'participle',badge:verb.type};
-  return{verb,text:"Translate to Spanish:",highlight:verb.base,hint:"English → Español",answer:verb.esPres,field:'esPres',badge:verb.type};
-}
+    function startQuiz() {
+      questions = generateQuestions(); current = 0; score = 0; correct = 0; wrong = 0; streak = 0; bestStreak = 0;
+      document.getElementById('modeScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'block';
+      renderQuestion();
+    }
 
-function generateQuestions(){
-  const verbs=shuffle(allVerbs).slice(0,TOTAL);
-  return verbs.map(v=>{if(mode==='mixed'){const m=['past','participle','esPres'];return buildQuestion(v,m[Math.floor(Math.random()*3)]);}return buildQuestion(v);});
-}
+    function renderQuestion() {
+      answered = false;
+      const q = questions[current];
+      document.getElementById('qCounter').textContent = `Q ${current + 1} / ${TOTAL}`;
+      document.getElementById('qTypeBadge').textContent = q.badge;
+      document.getElementById('questionText').innerHTML = `${q.text} <span class="verb-highlight">${q.highlight}</span>`;
+      document.getElementById('qHint').textContent = q.hint;
+      const w3 = getWrongOptions(q.answer, q.field, 3);
+      const opts = shuffle([q.answer, ...w3]);
+      const letters = ['A', 'B', 'C', 'D'];
+      const c = document.getElementById('optionsContainer'); c.innerHTML = '';
+      opts.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-letter">${letters[i]}.</span>${opt}`;
+        btn.onclick = () => selectAnswer(btn, opt, q);
+        c.appendChild(btn);
+      });
+      document.getElementById('feedback').className = 'feedback';
+      document.getElementById('verbCard').className = 'verb-card';
+      document.getElementById('nextBtn').className = 'next-btn';
+      document.getElementById('progressBar').style.width = (current / TOTAL * 100) + '%';
+      updateStats();
+    }
 
-function startQuiz(){
-  questions=generateQuestions();current=0;score=0;correct=0;wrong=0;streak=0;bestStreak=0;
-  document.getElementById('modeScreen').style.display='none';
-  document.getElementById('quizScreen').style.display='block';
-  renderQuestion();
-}
+    function selectAnswer(btn, chosen, q) {
+      if (answered) return; answered = true;
+      const isCorrect = chosen === q.answer;
+      const fb = document.getElementById('feedback');
+      document.querySelectorAll('.option-btn').forEach(b => {
+        b.disabled = true;
+        const text = b.textContent.trim().slice(2).trim();
+        if (text === q.answer) b.classList.add('correct');
+        else if (b === btn) b.classList.add('wrong');
+      });
+      if (isCorrect) { score += 10 + (streak * 2); correct++; streak++; if (streak > bestStreak) bestStreak = streak; fb.className = 'feedback correct-fb show'; fb.innerHTML = `✓ Correct!${streak > 1 ? ' <strong>+' + streak + 'x streak bonus!</strong>' : ''}`; }
+      else { wrong++; streak = 0; fb.className = 'feedback wrong-fb show'; fb.innerHTML = `✗ Wrong. Correct answer: <strong>${q.answer}</strong>`; }
+      document.getElementById('nextBtn').className = 'next-btn show';
+      const v = q.verb;
+      document.getElementById('vcBase').textContent = v.base;
+      document.getElementById('vcEsPres').textContent = v.esPres;
+      document.getElementById('vcPast').textContent = v.past;
+      document.getElementById('vcEsPast').textContent = v.esPast;
+      document.getElementById('vcParticiple').textContent = v.participle;
+      document.getElementById('vcEsPart').textContent = v.esPart;
+      document.getElementById('verbCard').className = 'verb-card show';
+      updateStats();
+    }
 
-function renderQuestion(){
-  answered=false;
-  const q=questions[current];
-  document.getElementById('qCounter').textContent=`Q ${current+1} / ${TOTAL}`;
-  document.getElementById('qTypeBadge').textContent=q.badge;
-  document.getElementById('questionText').innerHTML=`${q.text} <span class="verb-highlight">${q.highlight}</span>`;
-  document.getElementById('qHint').textContent=q.hint;
-  const w3=getWrongOptions(q.answer,q.field,3);
-  const opts=shuffle([q.answer,...w3]);
-  const letters=['A','B','C','D'];
-  const c=document.getElementById('optionsContainer');c.innerHTML='';
-  opts.forEach((opt,i)=>{
-    const btn=document.createElement('button');
-    btn.className='option-btn';
-    btn.innerHTML=`<span class="option-letter">${letters[i]}.</span>${opt}`;
-    btn.onclick=()=>selectAnswer(btn,opt,q);
-    c.appendChild(btn);
-  });
-  document.getElementById('feedback').className='feedback';
-  document.getElementById('verbCard').className='verb-card';
-  document.getElementById('nextBtn').className='next-btn';
-  document.getElementById('progressBar').style.width=(current/TOTAL*100)+'%';
-  updateStats();
-}
+    function nextQuestion() { current++; if (current >= TOTAL) showResult(); else renderQuestion(); }
+    function updateStats() { document.getElementById('statScore').textContent = score; document.getElementById('statCorrect').textContent = correct; document.getElementById('statWrong').textContent = wrong; document.getElementById('statStreak').textContent = streak; }
 
-function selectAnswer(btn,chosen,q){
-  if(answered)return;answered=true;
-  const isCorrect=chosen===q.answer;
-  const fb=document.getElementById('feedback');
-  document.querySelectorAll('.option-btn').forEach(b=>{
-    b.disabled=true;
-    const text=b.textContent.trim().slice(2).trim();
-    if(text===q.answer)b.classList.add('correct');
-    else if(b===btn)b.classList.add('wrong');
-  });
-  if(isCorrect){score+=10+(streak*2);correct++;streak++;if(streak>bestStreak)bestStreak=streak;fb.className='feedback correct-fb show';fb.innerHTML=`✓ Correct!${streak>1?' <strong>+'+streak+'x streak bonus!</strong>':''}`;}
-  else{wrong++;streak=0;fb.className='feedback wrong-fb show';fb.innerHTML=`✗ Wrong. Correct answer: <strong>${q.answer}</strong>`;}
-  document.getElementById('nextBtn').className='next-btn show';
-  const v=q.verb;
-  document.getElementById('vcBase').textContent=v.base;
-  document.getElementById('vcEsPres').textContent=v.esPres;
-  document.getElementById('vcPast').textContent=v.past;
-  document.getElementById('vcEsPast').textContent=v.esPast;
-  document.getElementById('vcParticiple').textContent=v.participle;
-  document.getElementById('vcEsPart').textContent=v.esPart;
-  document.getElementById('verbCard').className='verb-card show';
-  updateStats();
-}
+    function showResult() {
+      document.getElementById('quizScreen').style.display = 'none';
+      document.getElementById('resultScreen').className = 'result-screen show';
+      document.getElementById('resultScore').textContent = correct;
+      document.getElementById('resultTotal').textContent = `/ ${TOTAL} correct`;
+      document.getElementById('resCorrect').textContent = correct;
+      document.getElementById('resWrong').textContent = wrong;
+      document.getElementById('resBestStreak').textContent = bestStreak;
+      const pct = correct / TOTAL;
+      let stars = '⭐', msg = 'Keep practicing! Review the verb list and try again.';
+      if (pct >= 0.9) { stars = '⭐⭐⭐'; msg = 'Outstanding! You have mastered English verbs!'; }
+      else if (pct >= 0.7) { stars = '⭐⭐'; msg = "Great job! A little more practice and you'll nail it."; }
+      else if (pct >= 0.5) { stars = '⭐'; msg = 'Good effort! Review the trickier verbs and try again.'; }
+      document.getElementById('resultStars').textContent = stars;
+      document.getElementById('resultMsg').textContent = msg;
+    }
 
-function nextQuestion(){current++;if(current>=TOTAL)showResult();else renderQuestion();}
-function updateStats(){document.getElementById('statScore').textContent=score;document.getElementById('statCorrect').textContent=correct;document.getElementById('statWrong').textContent=wrong;document.getElementById('statStreak').textContent=streak;}
-
-function showResult(){
-  document.getElementById('quizScreen').style.display='none';
-  document.getElementById('resultScreen').className='result-screen show';
-  document.getElementById('resultScore').textContent=correct;
-  document.getElementById('resultTotal').textContent=`/ ${TOTAL} correct`;
-  document.getElementById('resCorrect').textContent=correct;
-  document.getElementById('resWrong').textContent=wrong;
-  document.getElementById('resBestStreak').textContent=bestStreak;
-  const pct=correct/TOTAL;
-  let stars='⭐',msg='Keep practicing! Review the verb list and try again.';
-  if(pct>=0.9){stars='⭐⭐⭐';msg='Outstanding! You have mastered English verbs!';}
-  else if(pct>=0.7){stars='⭐⭐';msg="Great job! A little more practice and you'll nail it.";}
-  else if(pct>=0.5){stars='⭐';msg='Good effort! Review the trickier verbs and try again.';}
-  document.getElementById('resultStars').textContent=stars;
-  document.getElementById('resultMsg').textContent=msg;
-}
-
-function restart(){document.getElementById('resultScreen').className='result-screen';document.getElementById('modeScreen').style.display='block';}
-</script>
+    function restart() { document.getElementById('resultScreen').className = 'result-screen'; document.getElementById('modeScreen').style.display = 'block'; }
+  </script>
 </body>
+
 </html>
