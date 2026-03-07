@@ -1,3 +1,4 @@
+[![Live Demo](https://img.shields.io/badge/demo-live_preview-007bff?style=for-the-badge&logo=google-chrome&logoColor=white)](https://isaac-maker.github.io/Verbs/)
 # 📘 English Verb Dictionary & Quiz 🚀
 
 A 2-in-1 web application designed to master English verbs. It combines an **advanced verb search engine** (regular and irregular) with an **interactive Quiz system** to test your knowledge.
