@@ -435,6 +435,70 @@
       padding: 0 2px;
     }
 
+    /* ── Speak buttons ─────────────────────────── */
+    .form-en-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .speak-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.82rem;
+      opacity: 0.35;
+      line-height: 1;
+      padding: 2px 3px;
+      border-radius: 4px;
+      transition: opacity 0.18s, transform 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .speak-btn:hover {
+      opacity: 1;
+      transform: scale(1.25);
+      background: rgba(26, 122, 110, 0.08);
+    }
+
+    .speak-btn.speaking {
+      opacity: 1;
+      animation: pulse-speak 0.5s ease infinite alternate;
+    }
+
+    @keyframes pulse-speak {
+      from { transform: scale(1);   opacity: 0.7; }
+      to   { transform: scale(1.35); opacity: 1;  }
+    }
+
+    .speak-all-btn {
+      background: none;
+      border: 1.5px solid var(--teal);
+      color: var(--teal);
+      border-radius: 50px;
+      padding: 3px 11px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      letter-spacing: 0.4px;
+      transition: background 0.18s, color 0.18s, transform 0.15s;
+      white-space: nowrap;
+    }
+
+    .speak-all-btn:hover {
+      background: var(--teal);
+      color: #fff;
+      transform: scale(1.04);
+    }
+
+    .speak-all-btn.speaking {
+      background: var(--teal);
+      color: #fff;
+      animation: pulse-speak 0.5s ease infinite alternate;
+    }
+
     /* Easter Egg Modal */
     #eggOverlay {
       display: none;
@@ -453,13 +517,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
 
     #eggBox {
@@ -475,21 +534,11 @@
     }
 
     @keyframes popUp {
-      from {
-        opacity: 0;
-        transform: scale(0.8) translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      from { opacity: 0; transform: scale(0.8) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    #eggEmoji {
-      font-size: 2.6rem;
-      margin-bottom: 10px;
-    }
+    #eggEmoji { font-size: 2.6rem; margin-bottom: 10px; }
 
     #eggName {
       font-family: 'Playfair Display', serif;
@@ -577,8 +626,6 @@
           </button>
         </a>
       </div>
-
-
     </header>
 
     <p class="header-sub">🔍 Busca en español o inglés · Regulares e Irregulares 👀</p>
@@ -617,7 +664,6 @@
   </div>
 
   <script>
-    // Each verb: base/past/participle in English + esPres/esPast/esParticiple in Spanish
     const VERBS = [
       // ─── IRREGULARES ────────────────────────────────────────────
       { type: "irregular", base: "Arise", past: "Arose", participle: "Arisen", esPres: "Surgir / Levantarse", esPast: "Surgió / Se levantó", esPart: "Surgido / Levantado" },
@@ -774,8 +820,6 @@
       { type: "irregular", base: "Withdraw", past: "Withdrew", participle: "Withdrawn", esPres: "Retirarse / Retirar", esPast: "Se retiró / Retiró", esPart: "Retirado" },
       { type: "irregular", base: "Wring", past: "Wrung", participle: "Wrung", esPres: "Torcer / Retorcer", esPast: "Torció / Retorció", esPart: "Torcido / Retorcido" },
       { type: "irregular", base: "Write", past: "Wrote", participle: "Written", esPres: "Escribir", esPast: "Escribió", esPart: "Escrito" },
-
-      // ─── IRREGULARES ADICIONALES ────────────────────────────────
       { type: "irregular", base: "Abide", past: "Abode / Abided", participle: "Abode / Abided", esPres: "Tolerar / Soportar", esPast: "Toleró / Soportó", esPart: "Tolerado / Soportado" },
       { type: "irregular", base: "Befall", past: "Befell", participle: "Befallen", esPres: "Ocurrirle / Sucederle", esPast: "Le ocurrió / Le sucedió", esPart: "Ocurrido / Sucedido" },
       { type: "irregular", base: "Behold", past: "Beheld", participle: "Beheld", esPres: "Contemplar / Observar", esPast: "Contempló / Observó", esPart: "Contemplado / Observado" },
@@ -974,7 +1018,7 @@
       { type: "regular", sound: "t", base: "Approach", past: "Approached", participle: "Approached", esPres: "Acercarse / Aproximarse", esPast: "Se acercó / Se aproximó", esPart: "Acercado / Aproximado" },
       { type: "regular", sound: "t", base: "Attach", past: "Attached", participle: "Attached", esPres: "Adjuntar / Sujetar", esPast: "Adjuntó / Sujetó", esPart: "Adjuntado / Sujetado" },
       { type: "regular", sound: "t", base: "Bounce", past: "Bounced", participle: "Bounced", esPres: "Rebotar / Botar", esPast: "Rebotó / Botó", esPart: "Rebotado / Botado" },
-      { type: "regular", sound: "t", base: "Call", past: "Called", participle: "Called", esPres: "Llamar", esPast: "Llamó", esPart: "Llamado" },
+      { type: "regular", sound: "t", base: "Call", past: "Called", participle: "Caled", esPres: "Llamar", esPast: "Llamó", esPart: "Llamado" },
       { type: "regular", sound: "t", base: "Cause", past: "Caused", participle: "Caused", esPres: "Causar / Ocasionar", esPast: "Causó / Ocasionó", esPart: "Causado / Ocasionado" },
       { type: "regular", sound: "t", base: "Chase", past: "Chased", participle: "Chased", esPres: "Perseguir", esPast: "Persiguió", esPart: "Perseguido" },
       { type: "regular", sound: "t", base: "Check", past: "Checked", participle: "Checked", esPres: "Revisar / Verificar", esPast: "Revisó / Verificó", esPart: "Revisado / Verificado" },
@@ -1084,6 +1128,46 @@
     const results = document.getElementById('results');
     const statsCount = document.getElementById('statsCount');
 
+    // ── Speech API ───────────────────────────────────────────────
+    let _activeSpeakBtn = null;
+
+    function speak(text, btn) {
+      speechSynthesis.cancel();
+      if (_activeSpeakBtn) { _activeSpeakBtn.classList.remove('speaking'); _activeSpeakBtn = null; }
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = 'en-US';
+      utt.rate = 0.82;
+      if (btn) {
+        btn.classList.add('speaking');
+        _activeSpeakBtn = btn;
+        utt.onend = () => {
+          btn.classList.remove('speaking');
+          if (_activeSpeakBtn === btn) _activeSpeakBtn = null;
+        };
+      }
+      speechSynthesis.speak(utt);
+    }
+
+    function speakAll(base, past, part, btn) {
+      speechSynthesis.cancel();
+      if (_activeSpeakBtn) { _activeSpeakBtn.classList.remove('speaking'); _activeSpeakBtn = null; }
+      if (btn) { btn.classList.add('speaking'); _activeSpeakBtn = btn; }
+      const texts = [base, past, part];
+      let i = 0;
+      function next() {
+        if (i >= texts.length) {
+          if (btn) { btn.classList.remove('speaking'); _activeSpeakBtn = null; }
+          return;
+        }
+        const utt = new SpeechSynthesisUtterance(texts[i++]);
+        utt.lang = 'en-US';
+        utt.rate = 0.82;
+        utt.onend = next;
+        speechSynthesis.speak(utt);
+      }
+      next();
+    }
+
     function highlight(text, query) {
       if (!query) return text;
       const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1140,6 +1224,11 @@
           ? `<span class="badge badge-sound">${soundLabel} sound</span>`
           : '';
 
+        // Escape for use inside onclick attribute strings
+        const bEsc = v.base.replace(/'/g, "\\'");
+        const pEsc = v.past.replace(/'/g, "\\'");
+        const ptEsc = v.participle.replace(/'/g, "\\'");
+
         const hBase = highlight(v.base, q);
         const hPast = highlight(v.past, q);
         const hPart = highlight(v.participle, q);
@@ -1157,22 +1246,32 @@
         <div class="badge-wrap">
           ${typeBadge}
           ${soundBadge}
+          <button class="speak-all-btn" onclick="speakAll('${bEsc}','${pEsc}','${ptEsc}',this)" title="Pronunciar las 3 formas">🔊 ×3</button>
         </div>
       </div>
       <div class="card-forms">
         <div class="form-cell">
           <div class="form-label">Base Form</div>
-          <div class="form-en">${hBase}</div>
+          <div class="form-en-wrap">
+            <span class="form-en">${hBase}</span>
+            <button class="speak-btn" onclick="speak('${bEsc}',this)" title="Pronunciar">🔊</button>
+          </div>
           <div class="form-es">${hPres}</div>
         </div>
         <div class="form-cell">
           <div class="form-label">Simple Past</div>
-          <div class="form-en">${hPast}</div>
+          <div class="form-en-wrap">
+            <span class="form-en">${hPast}</span>
+            <button class="speak-btn" onclick="speak('${pEsc}',this)" title="Pronunciar">🔊</button>
+          </div>
           <div class="form-es">${hEsPast}</div>
         </div>
         <div class="form-cell">
           <div class="form-label">Past Participle</div>
-          <div class="form-en">${hPart}</div>
+          <div class="form-en-wrap">
+            <span class="form-en">${hPart}</span>
+            <button class="speak-btn" onclick="speak('${ptEsc}',this)" title="Pronunciar">🔊</button>
+          </div>
           <div class="form-es">${hEsPart}</div>
         </div>
       </div>
