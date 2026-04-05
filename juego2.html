@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Question Types — Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <header>
+      <div class="logo-tag">English Grammar Quiz</div>
+      <h1>Question Types<br>Practice</h1>
+     
+      <div class="logo-tag"> Created by • Isaac-maker</div> <p class="subtitle">Domina cuándo usar cada tipo de pregunta en inglés</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showView('start')">🎮 Practicar</button>
+      <button class="tab-btn" onclick="showView('notes')">📖 Notas</button>
+    </div>
+
+    <!-- START VIEW -->
+    <div id="view-start">
+      <div class="start-card">
+        <h2>Selecciona los tipos de pregunta que desea practicar o selecciona todas. 👀</h2>
+        <div class="tabs">
+          <button class="tab-btn" onclick="selectAll()">Seleccionar todos</button>
+          <button class="tab-btn" onclick="deselectAll()">Limpiar</button>
+        </div>
+        <div class="type-grid" id="type-grid"></div>
+
+        <div class="options-row">
+          <label>
+            Modo:
+            <select id="mode-select">
+              <option value="multiple">Opción múltiple</option>
+              <option value="type">Escribir respuesta</option>
+            </select>
+          </label>
+          <label>
+            Preguntas:
+            <select id="count-select">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20" selected>20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+              <option value="all">Todas</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn-start" id="start-btn" onclick="startQuiz()" disabled>
+          Comenzar quiz →
+        </button>
+      </div>
+    </div>
+
+    <!-- QUIZ VIEW -->
+    <div id="view-quiz">
+      <div class="quiz-header">
+        <div class="quiz-meta">
+          <span class="badge badge-type" id="q-type">—</span>
+          <span class="badge badge-score" id="q-score">✓ 0</span>
+          <span class="badge badge-progress" id="q-progress">1/20</span>
+        </div>
+        <button class="btn-quit" onclick="quitQuiz()">✕ Salir</button>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+
+      <div class="sentence-card">
+        <div class="sentence-label">Convierte en pregunta</div>
+        <div class="sentence-text" id="q-sentence"></div>
+
+        <div class="prompt" id="q-prompt"></div>
+        <!-- Dynamic content: input or choices go here -->
+        <div id="q-input-area"></div>
+
+        <div class="feedback-box" id="feedback">
+          <div class="feedback-title" id="fb-title"></div>
+          <div class="feedback-answer" id="fb-answer"></div>
+          <div class="feedback-why" id="fb-why"></div>
+          <button class="next-btn" id="next-btn" onclick="nextQuestion()">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div id="view-results" style="display:none">
+      <div class="results-card">
+        <div class="score-circle" id="score-circle">
+          <span class="score-num" id="r-score"></span>
+          <span class="score-den" id="r-total"></span>
+        </div>
+        <div class="results-msg" id="r-msg"></div>
+        <div class="results-sub" id="r-sub"></div>
+        <div class="mistakes-list" id="mistakes-list"></div>
+        <div class="results-actions">
+          <button class="btn-retry" onclick="retryQuiz()">🔁 Repetir errores</button>
+          <button class="btn-home" onclick="goHome()">← Inicio</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES VIEW -->
+    <div id="view-notes">
+      <div class="notes-grid" id="notes-grid"></div>
+    </div>
+  </div>
+
+  <footer>English Question Types Quiz · Created by • Isaac-maker © 2026</footer>
+
+  <script>
+    // ─── INJECT QUESTION DATA ───────────────────────────────────────────────────
+  </script>
+  <script src="questions_data.js"></script>
+  <script>
+    // ─── NOTES CONTENT ──────────────────────────────────────────────────────────
+    const NOTES = [
+      {
+        kw: "DO", title: "Present Simple — I/You/We/They",
+        rule: `Usa <strong>DO</strong> con los sujetos: <strong>I, You, We, They</strong> y sustantivos plurales en tiempo presente.`,
+        formula: "Do + I/You/We/They/Plural + verbo base?",
+        example: `"They play soccer." → <span>Do they play soccer?</span>`
+      },
+      {
+        kw: "DOES", title: "Present Simple — He/She/It",
+        rule: `Usa <strong>DOES</strong> con la 3ra persona singular: <strong>He, She, It</strong> y nombres propios singulares.`,
+        formula: "Does + He/She/It/Name + verbo base?",
+        example: `"She works here." → <span>Does she work here?</span>`
+      },
+      {
+        kw: "DID", title: "Past Simple — todos los sujetos",
+        rule: `Usa <strong>DID</strong> para el pasado simple con <strong>cualquier sujeto</strong>. El verbo vuelve a su forma base, sin -ed.`,
+        formula: "Did + sujeto + verbo BASE (¡sin -ed!)?",
+        example: `"She worked." → <span>Did she work?</span> (no "Did she worked?")`
+      },
+      {
+        kw: "IS", title: "To Be Presente — Singular",
+        rule: `Usa <strong>IS</strong> con sujetos singulares: <strong>He, She, It</strong> y sustantivos singulares. No necesitas auxiliar; el verbo IS se mueve al inicio.`,
+        formula: "Is + He/She/It/singular?",
+        example: `"She is tired." → <span>Is she tired?</span>`
+      },
+      {
+        kw: "ARE", title: "To Be Presente — Plural/You",
+        rule: `Usa <strong>ARE</strong> con <strong>You, We, They</strong> y sustantivos plurales en presente. El verbo ARE se mueve al inicio.`,
+        formula: "Are + You/We/They/plural?",
+        example: `"They are ready." → <span>Are they ready?</span>`
+      },
+      {
+        kw: "WAS", title: "To Be Pasado — Singular",
+        rule: `Usa <strong>WAS</strong> con <strong>I, He, She, It</strong> y singulares en el <strong>pasado</strong>. WAS se mueve al inicio.`,
+        formula: "Was + I/He/She/It/singular?",
+        example: `"She was late." → <span>Was she late?</span>`
+      },
+      {
+        kw: "WERE", title: "To Be Pasado — Plural/You",
+        rule: `Usa <strong>WERE</strong> con <strong>You, We, They</strong> y plurales en el <strong>pasado</strong>. WERE se mueve al inicio.`,
+        formula: "Were + You/We/They/plural?",
+        example: `"They were happy." → <span>Were they happy?</span>`
+      },
+      {
+        kw: "WHAT", title: "¿Qué? — Cosas y acciones",
+        rule: `Usa <strong>WHAT</strong> para preguntar por cosas, objetos o acciones. Si WHAT es el sujeto de la oración, no se usa auxiliar.`,
+        formula: "What + auxiliar + sujeto + verbo base? (o What + verbo?)",
+        example: `"She eats something." → <span>What does she eat?</span><br>"Something happened." → <span>What happened?</span>`
+      },
+      {
+        kw: "WHERE", title: "¿Dónde? — Lugar",
+        rule: `Usa <strong>WHERE</strong> para preguntar por el lugar o destino. El auxiliar (do/does/did/is/are) va después del WHERE.`,
+        formula: "Where + auxiliar + sujeto + verbo base?",
+        example: `"She lives somewhere." → <span>Where does she live?</span>`
+      },
+      {
+        kw: "WHO", title: "¿Quién? — Personas",
+        rule: `Usa <strong>WHO</strong> para personas. Si WHO es el sujeto (hace la acción), no se usa auxiliar. Si WHO es el objeto, sí se usa auxiliar.`,
+        formula: "Who + verbo? (sujeto) / Who + aux + sujeto + verbo? (objeto)",
+        example: `"Someone called." → <span>Who called?</span><br>"She called someone." → <span>Who did she call?</span>`
+      },
+      {
+        kw: "WHICH", title: "¿Cuál? — Opciones limitadas",
+        rule: `Usa <strong>WHICH</strong> cuando hay un grupo <strong>definido y limitado</strong> de opciones. Se puede usar con o sin sustantivo.`,
+        formula: "Which + noun + auxiliar + sujeto + verbo base?",
+        example: `"She chose one dress." → <span>Which dress did she choose?</span>`
+      },
+      {
+        kw: "HOW", title: "¿Cómo? — Manera o método",
+        rule: `Usa <strong>HOW</strong> para preguntar por el <strong>modo, manera o método</strong> de hacer algo.`,
+        formula: "How + auxiliar + sujeto + verbo base?",
+        example: `"He fixed it somehow." → <span>How did he fix it?</span>`
+      },
+      {
+        kw: "HOW MANY", title: "¿Cuántos? — Contables",
+        rule: `Usa <strong>HOW MANY</strong> con sustantivos <strong>contables</strong> (que tienen plural: books, people, cars). El sustantivo va en plural.`,
+        formula: "How many + noun(plural) + aux + sujeto + verbo?",
+        example: `"She has some books." → <span>How many books does she have?</span>`
+      },
+      {
+        kw: "HOW MUCH", title: "¿Cuánto? — Incontables",
+        rule: `Usa <strong>HOW MUCH</strong> con sustantivos <strong>incontables</strong> (money, water, time, rice) que no tienen plural natural.`,
+        formula: "How much + noun(singular) + aux + sujeto + verbo?",
+        example: `"She spent some money." → <span>How much money did she spend?</span>`
+      },
+      {
+        kw: "WHOM", title: "¿A quién? — Objeto formal",
+        rule: `Usa <strong>WHOM</strong> como forma formal de WHO cuando es el <strong>objeto</strong> del verbo o de una preposición. Siempre va después de la preposición (to, with, about, for...).`,
+        formula: "Prep + whom + aux + sujeto + verbo? / Whom + did + sujeto + verbo?",
+        example: `"She talked to someone." → <span>To whom did she talk?</span><br>"They hired someone." → <span>Whom did they hire?</span>`
+      },
+      {
+        kw: "WHOSE", title: "¿De quién? — Posesión",
+        rule: `Usa <strong>WHOSE</strong> para preguntar por el <strong>dueño o poseedor</strong> de algo. Siempre va seguido del sustantivo que se posee.`,
+        formula: "Whose + noun + aux + sujeto + verbo?",
+        example: `"Someone's car is here." → <span>Whose car is here?</span>`
+      },
+      {
+        kw: "WHEN", title: "¿Cuándo? — Tiempo o momento",
+        rule: `Usa <strong>WHEN</strong> para preguntar por el <strong>momento, hora, día o fecha</strong> en que ocurre algo. El auxiliar depende del tiempo verbal.`,
+        formula: "When + did/does/do/is/are/was/were + sujeto + verbo?",
+        example: `"She arrived yesterday." → <span>When did she arrive?</span><br>"The meeting is tomorrow." → <span>When is the meeting?</span>`
+      },
+      {
+        kw: "WHY", title: "¿Por qué? — Razón o motivo",
+        rule: `Usa <strong>WHY</strong> para preguntar por la <strong>razón o causa</strong> de algo. El auxiliar depende del tiempo verbal de la oración original.`,
+        formula: "Why + did/does/do/is/are/was/were + sujeto + verbo?",
+        example: `"She left early." → <span>Why did she leave early?</span><br>"He is upset." → <span>Why is he upset?</span>`
+      },
+    ];
+
+    // ─── STATE ───────────────────────────────────────────────────────────────────
+    let selectedTypes = [];
+    let quizQuestions = [];
+    let current = 0;
+    let score = 0;
+    let mistakes = [];
+    let mode = 'multiple';
+    let lastWrongQuestions = [];
+
+    // ─── INIT ─────────────────────────────────────────────────────────────────────
+    function init() {
+      buildTypeGrid();
+      buildNotesGrid();
+    }
+
+    function buildTypeGrid() {
+      const types = [
+        { key: 'does', label: 'Present sing.' },
+        { key: 'do', label: 'Present pl./you' },
+        { key: 'did', label: 'Past simple' },
+        { key: 'is', label: 'To be sing.' },
+        { key: 'are', label: 'To be pl.' },
+        { key: 'was', label: 'To be past sing.' },
+        { key: 'were', label: 'To be past pl.' },
+        { key: 'what', label: '¿Qué?' },
+        { key: 'where', label: '¿Dónde?' },
+        { key: 'who', label: '¿Quién?' },
+        { key: 'which', label: '¿Cuál?' },
+        { key: 'how', label: '¿Cómo?' },
+        { key: 'how_many', label: '¿Cuántos?' },
+        { key: 'how_much', label: '¿Cuánto?' },
+        { key: 'whom',  label: '¿A quién? (formal)' },
+        { key: 'whose', label: '¿De quién?' },
+        { key: 'when',  label: '¿Cuándo?' },
+        { key: 'why',   label: '¿Por qué?' },
+      ];
+      const grid = document.getElementById('type-grid');
+      grid.innerHTML = '';
+      types.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'type-card';
+        el.dataset.key = t.key;
+        el.innerHTML = `<span class="keyword">${t.key.replace('_', ' ').toUpperCase()}</span><span class="label">${t.label}</span>`;
+        el.onclick = () => toggleType(t.key, el);
+        grid.appendChild(el);
+      });
+    }
+
+    function buildNotesGrid() {
+      const grid = document.getElementById('notes-grid');
+      grid.innerHTML = '';
+      NOTES.forEach(n => {
+        const el = document.createElement('div');
+        el.className = 'note-card';
+        el.innerHTML = `
+      <div class="note-kw">${n.kw}</div>
+      <div class="note-title">${n.title}</div>
+      <div class="note-rule">${n.rule}</div>
+      <div class="note-formula">${n.formula}</div>
+      <div class="note-example">${n.example}</div>
+    `;
+        grid.appendChild(el);
+      });
+    }
+
+    function toggleType(key, el) {
+      if (selectedTypes.includes(key)) {
+        selectedTypes = selectedTypes.filter(k => k !== key);
+        el.classList.remove('selected');
+      } else {
+        selectedTypes.push(key);
+        el.classList.add('selected');
+      }
+      document.getElementById('start-btn').disabled = selectedTypes.length === 0;
+    }
+
+    function selectAll() {
+      document.querySelectorAll('.type-card').forEach(el => {
+        const key = el.dataset.key;
+        if (!selectedTypes.includes(key)) {
+          selectedTypes.push(key);
+          el.classList.add('selected');
+        }
+      });
+      document.getElementById('start-btn').disabled = false;
+    }
+
+    function deselectAll() {
+      selectedTypes = [];
+      document.querySelectorAll('.type-card').forEach(el => el.classList.remove('selected'));
+      document.getElementById('start-btn').disabled = true;
+    }
+
+    function showView(v) {
+      document.getElementById('view-start').style.display = 'none';
+      document.getElementById('view-quiz').style.display = 'none';
+      document.getElementById('view-results').style.display = 'none';
+      document.getElementById('view-notes').style.display = 'none';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+      if (v === 'start') {
+        document.getElementById('view-start').style.display = 'block';
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      } else if (v === 'quiz') {
+        document.getElementById('view-quiz').style.display = 'block';
+      } else if (v === 'results') {
+        document.getElementById('view-results').style.display = 'block';
+      } else if (v === 'notes') {
+        document.getElementById('view-notes').style.display = 'block';
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      }
+    }
+
+    // ─── QUIZ LOGIC ───────────────────────────────────────────────────────────────
+    function startQuiz(questionsOverride) {
+      mode = document.getElementById('mode-select').value;
+      const countVal = document.getElementById('count-select').value;
+
+      // Gather questions from selected types
+      let pool = [];
+      if (questionsOverride) {
+        pool = questionsOverride;
+      } else {
+        selectedTypes.forEach(type => {
+          const qs = ALL_QUESTIONS[type];
+          if (qs) pool.push(...qs.map(q => ({ ...q, type })));
+        });
+        shuffle(pool);
+        if (countVal !== 'all') {
+          pool = pool.slice(0, parseInt(countVal));
+        }
+      }
+
+      quizQuestions = pool;
+      current = 0;
+      score = 0;
+      mistakes = [];
+      showView('quiz');
+      renderQuestion();
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function renderQuestion() {
+      const q = quizQuestions[current];
+      const total = quizQuestions.length;
+
+      document.getElementById('q-type').textContent = (q.type || '').replace('_', ' ').toUpperCase();
+      document.getElementById('q-score').textContent = `✓ ${score}`;
+      document.getElementById('q-progress').textContent = `${current + 1}/${total}`;
+      document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+      document.getElementById('q-sentence').textContent = q.sentence;
+
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'none';
+      fb.className = 'feedback-box';
+
+      const area = document.getElementById('q-input-area');
+      area.innerHTML = '';
+
+      if (mode === 'type') {
+        renderTypeMode(q, area);
+      } else {
+        renderMultipleChoice(q, area);
+      }
+    }
+
+    function renderTypeMode(q, area) {
+      document.getElementById('q-prompt').textContent = '✏️ Escribe la pregunta completa:';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'answer-input';
+      inp.placeholder = 'Escribe la pregunta aquí...';
+      inp.id = 'type-input';
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkType(); });
+
+      const btn = document.createElement('button');
+      btn.className = 'submit-btn';
+      btn.textContent = 'Verificar';
+      btn.onclick = checkType;
+
+      area.appendChild(inp);
+      area.appendChild(btn);
+      setTimeout(() => inp.focus(), 100);
+    }
+
+    function renderMultipleChoice(q, area) {
+      document.getElementById('q-prompt').textContent = '👆 Selecciona la pregunta correcta:';
+
+      // Generate distractors
+      const options = generateOptions(q);
+      shuffle(options);
+
+      const grid = document.createElement('div');
+      grid.className = 'choices-grid';
+
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = opt;
+        btn.onclick = () => checkChoice(opt, q, grid);
+        grid.appendChild(btn);
+      });
+      area.appendChild(grid);
+    }
+
+    function generateOptions(q) {
+      const correct = q.question;
+      const type = q.type;
+      const sentence = q.sentence;
+
+      // Generate plausible wrong answers by modifying the correct question
+      const wrongs = new Set();
+
+      // Common confusion patterns
+      const swaps = {
+        'Does': ['Do', 'Did', 'Is', 'Was'],
+        'Do': ['Does', 'Did', 'Are', 'Were'],
+        'Did': ['Do', 'Does', 'Was', 'Were'],
+        'Is': ['Are', 'Was', 'Were', 'Does'],
+        'Are': ['Is', 'Were', 'Was', 'Do'],
+        'Was': ['Were', 'Is', 'Did', 'Had'],
+        'Were': ['Was', 'Are', 'Did', 'Have'],
+        'What': ['Which', 'How', 'Where'],
+        'Where': ['What', 'Who', 'Which'],
+        'Who': ['What', 'Which', 'Where'],
+        'Which': ['What', 'Who', 'Which one'],
+        'How': ['What', 'How much', 'How many'],
+        'How many': ['How much', 'What', 'How'],
+        'How much': ['How many', 'What', 'How'],
+        'To whom': ['To who', 'For whom', 'With whom'],
+        'With whom': ['To whom', 'About whom', 'For whom'],
+        'About whom': ['To whom', 'With whom', 'Whom'],
+        'Whom': ['Who', 'To whom', 'Which'],
+        'Whose': ['Who', 'Which', 'What'],
+        'When': ['Where', 'Why', 'How'],
+        'Why': ['When', 'How', 'What'],
+      };
+
+      // Find the first word(s) of correct question
+      const firstWord = correct.split(' ')[0];
+      const twoWords = correct.split(' ').slice(0, 2).join(' ');
+
+      const candidates = swaps[twoWords] || swaps[firstWord] || ['Do', 'Did', 'Is', 'What'];
+
+      candidates.forEach(swap => {
+        if (wrongs.size >= 3) return;
+        let wrong;
+        if (correct.startsWith(twoWords) && swaps[twoWords]) {
+          wrong = swap + ' ' + correct.slice(twoWords.length);
+        } else {
+          wrong = swap + ' ' + correct.slice(firstWord.length);
+        }
+        if (wrong !== correct) wrongs.add(wrong);
+      });
+
+      // Pad if needed with generic wrong
+      const fallbacks = ['Did she do that?', 'Is it correct?', 'Do they know?', 'Was it ready?'];
+      fallbacks.forEach(f => { if (wrongs.size < 3 && f !== correct) wrongs.add(f); });
+
+      return [correct, ...[...wrongs].slice(0, 3)];
+    }
+
+    function checkChoice(chosen, q, grid) {
+      const btns = grid.querySelectorAll('.choice-btn');
+      btns.forEach(b => {
+        b.disabled = true;
+        if (b.textContent === q.question) b.classList.add('correct');
+        if (b.textContent === chosen && chosen !== q.question) b.classList.add('wrong');
+      });
+
+      if (chosen === q.question) {
+        score++;
+        showFeedback(true, q);
+      } else {
+        mistakes.push(q);
+        showFeedback(false, q);
+      }
+    }
+
+    function checkType() {
+      const inp = document.getElementById('type-input');
+      const q = quizQuestions[current];
+      const userAnswer = inp.value.trim();
+      const correct = q.question;
+
+      // Flexible check: case insensitive, trim punctuation
+      const normalize = s => s.toLowerCase().replace(/[?!.]+$/, '').trim();
+      const isCorrect = normalize(userAnswer) === normalize(correct);
+
+      inp.className = 'answer-input ' + (isCorrect ? 'correct' : 'wrong');
+      inp.disabled = true;
+      document.querySelector('.submit-btn').disabled = true;
+
+      if (isCorrect) {
+        score++;
+        showFeedback(true, q);
+      } else {
+        mistakes.push(q);
+        showFeedback(false, q);
+      }
+    }
+
+    function showFeedback(isCorrect, q) {
+      const fb = document.getElementById('feedback');
+      fb.style.display = 'block';
+      fb.className = 'feedback-box ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+
+      document.getElementById('fb-title').textContent = isCorrect ? '✓ ¡Correcto!' : '✗ Incorrecto';
+      document.getElementById('fb-answer').textContent = '→ ' + q.question;
+
+      // Parse why to highlight
+      const whyText = q.why.replace(/→/g, '<strong>→</strong>');
+      document.getElementById('fb-why').innerHTML = whyText;
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= quizQuestions.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResults() {
+      const total = quizQuestions.length;
+      const pct = Math.round((score / total) * 100);
+
+      const circle = document.getElementById('score-circle');
+      circle.className = 'score-circle ' + (pct >= 80 ? 'great' : pct >= 50 ? 'ok' : 'low');
+      document.getElementById('r-score').textContent = score;
+      document.getElementById('r-total').textContent = `de ${total}`;
+
+      const msgs = {
+        great: ['¡Excelente trabajo! 🎉', '¡Increíble! 🚀', '¡Perfecto! 🏆'],
+        ok: ['Buen intento 💪', 'Vas bien, sigue practicando 📚', 'Progresando 🌱'],
+        low: ['Necesitas más práctica 🔄', 'No te rindas, repasa las notas 📖', 'Inténtalo de nuevo 💡'],
+      };
+      const tier = pct >= 80 ? 'great' : pct >= 50 ? 'ok' : 'low';
+      const msgArr = msgs[tier];
+      document.getElementById('r-msg').textContent = msgArr[Math.floor(Math.random() * msgArr.length)];
+      document.getElementById('r-sub').textContent = `${pct}% correcto · ${mistakes.length} error${mistakes.length !== 1 ? 'es' : ''}`;
+
+      const ml = document.getElementById('mistakes-list');
+      if (mistakes.length > 0) {
+        ml.innerHTML = `<h3>🔍 Tus errores (${mistakes.length})</h3>`;
+        mistakes.forEach(m => {
+          const el = document.createElement('div');
+          el.className = 'mistake-item';
+          el.innerHTML = `
+        <div class="mistake-sentence">📝 ${m.sentence}</div>
+        <div class="mistake-correct">✓ ${m.question}</div>
+        <div class="mistake-why">${m.why}</div>
+      `;
+          ml.appendChild(el);
+        });
+      } else {
+        ml.innerHTML = '';
+      }
+
+      // Store wrong for retry
+      lastWrongQuestions = [...mistakes];
+      showView('results');
+    }
+
+    function retryQuiz() {
+      if (lastWrongQuestions.length === 0) {
+        goHome(); return;
+      }
+      // Reset and redo only mistakes
+      current = 0;
+      score = 0;
+      mistakes = [];
+      quizQuestions = shuffle([...lastWrongQuestions]);
+      showView('quiz');
+      renderQuestion();
+    }
+
+    function quitQuiz() {
+      if (confirm('¿Salir del quiz? Perderás el progreso actual.')) {
+        goHome();
+      }
+    }
+
+    function goHome() {
+      showView('start');
+    }
+
+    // ─── BOOT ────────────────────────────────────────────────────────────────────
+    init();
+    showView('start');
+  </script>
+</body>
+
+</html>
